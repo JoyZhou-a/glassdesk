@@ -1,0 +1,41 @@
+# ---- 密钥：绝不入库 ----
+.env
+.env.local
+*.key
+
+# ---- Python ----
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.uv/
+
+# ---- 测试与覆盖率 ----
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# ---- 运行产物（保留目录结构，忽略内容）----
+logs/*
+!logs/.gitkeep
+outputs/*
+!outputs/.gitkeep
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+*.log
+
+# ---- 模型权重（外置在 E:\models，永不入库）----
+models/
+
+# ---- 编辑器 ----
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db

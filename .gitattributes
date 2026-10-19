@@ -1,0 +1,18 @@
+# 统一换行符，避免 Windows / Linux 上 diff 全是噪音
+* text=auto eol=lf
+
+# 脚本保留 CRLF（PowerShell 在 Windows 上更稳）
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 二进制
+*.xlsx binary
+*.xls binary
+*.docx binary
+*.pdf binary
+*.png binary
+*.jpg binary
+
+# 统计时不计入
+uv.lock linguist-generated=true

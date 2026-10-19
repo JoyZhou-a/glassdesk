@@ -1,0 +1,84 @@
+# =====================================================================
+# GlassDesk 主配置
+# 密钥（密码 / API Key）不在这里，在 .env 中。
+# 本文件可以入库；.env 不能入库。
+# =====================================================================
+
+app:
+  name: GlassDesk
+  env: dev
+  timezone: Australia/Sydney
+
+# 相对路径以项目根目录为基准；绝对路径原样使用
+paths:
+  models: E:/models
+  data: data
+  logs: logs
+  outputs: outputs
+
+models:
+  embedder: E:/models/bge-m3
+  reranker: E:/models/bge-reranker-v2-m3
+  intent_backbone: E:/models/distilbert-base-uncased
+
+services:
+  milvus:
+    host: 192.168.88.100
+    port: 19530
+    database: glassdesk
+    database_test: glassdesk_test
+    collection: chunks
+  mysql:
+    host: 192.168.88.100
+    port: 3306
+    user: root
+    database: glassdesk
+    database_test: glassdesk_test
+    charset: utf8mb4
+  redis:
+    host: 192.168.88.100
+    port: 6379
+    db: 1
+    db_test: 15
+
+llm:
+  provider: deepseek
+  base_url: https://api.deepseek.com
+  # 实测该账号请求 deepseek-chat 会返回 deepseek-flash，
+  # 因此日志中额外记录响应体的 model 字段，便于核对实际调用的模型。
+  model: deepseek-chat
+  temperature: 0.1
+  max_tokens: 1024
+  timeout_s: 60
+  max_retries: 2
+
+retrieval:
+  # 父子块切分
+  parent_chunk_size: 1200
+  child_chunk_size: 300
+  chunk_overlap: 50
+  # 召回与重排
+  top_k: 20
+  rerank_candidates: 20
+  final_k: 5
+  hybrid:
+    dense_weight: 0.7
+    sparse_weight: 0.3
+  # 低于该分数视为"没有依据"，应触发拒答而不是硬答
+  min_rerank_score: 0.35
+
+answer:
+  # 电话模式的输出约束（对应 PRD 的 I2 / I5）
+  phone_max_lines: 3
+  phone_max_sentence_chars: 60
+  # 低于该置信度必须显式提示（对应 PRD 的 I6）
+  low_confidence_threshold: 0.6
+  # 售后理赔类强制转人工（对应 PRD US-04）
+  force_human_intents:
+    - after_sales
+
+logging:
+  level: INFO
+  file: logs/app.log
+  rotation: 10 MB
+  retention: 14 days
