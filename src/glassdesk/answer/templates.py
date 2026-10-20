@@ -14,13 +14,29 @@ from __future__ import annotations
 from glassdesk.routing.structured import CapabilityVerdict, LeadTimeQuote, PriceQuote
 from glassdesk.routing.slots import Slots
 
-#: PRD I5：电话模式下单句最多这么长
+#: PRD I5 / I2 的默认值。真正的值来自 config.answer，
+#: 由 set_limits() 在进程启动时统一覆盖。
 PHONE_MAX_SENTENCE = 60
-#: PRD I2：电话模式最多这么行
 PHONE_MAX_LINES = 3
 
 
-def _clip(sentence: str, limit: int = PHONE_MAX_SENTENCE) -> str:
+def set_limits(max_lines: int | None = None, max_sentence: int | None = None) -> None:
+    """从 config.answer 覆盖电话模式上限。
+
+    模板是模块级函数，逐个传配置太重；在进程启动时设一次即可。
+    不设也能跑（用默认值），但那样 config 里那两个参数就成了摆设。
+    """
+    global PHONE_MAX_LINES, PHONE_MAX_SENTENCE
+    if max_lines:
+        PHONE_MAX_LINES = int(max_lines)
+    if max_sentence:
+        PHONE_MAX_SENTENCE = int(max_sentence)
+
+
+def _clip(sentence: str, limit: int | None = None) -> str:
+    # 注意不能写成默认参数 limit=PHONE_MAX_SENTENCE：默认值在函数定义时就绑定了，
+    # 之后 set_limits() 改了模块常量也不会生效。
+    limit = limit or PHONE_MAX_SENTENCE
     return sentence if len(sentence) <= limit else sentence[: limit - 1] + "…"
 
 

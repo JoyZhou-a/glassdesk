@@ -27,9 +27,11 @@ from glassdesk.retrieval.service import RetrievedChunk
 
 log = get_logger("answer.generator")
 
-#: 电话模式单句上限（PRD I5）
+#: 电话模式单句上限（PRD I5）。
+#: 这是**默认值**；真正的值来自 config.answer.phone_max_sentence_chars，
+#: 由 AnswerGenerator 构造时读取。保留常量是为了让测试和模板有兜底。
 PHONE_MAX_SENTENCE = 60
-#: 电话模式最多行数（PRD I2）
+#: 电话模式最多行数（PRD I2），同上
 PHONE_MAX_LINES = 3
 #: 出现这些就说明模型在写富文本，电话模式不能用
 _FORBIDDEN = ("|", "**", "###", "- ", "•")
@@ -130,7 +132,9 @@ class AnswerGenerator:
         # 4. 代码侧格式校验：模型不一定听话
         body = _strip_markdown(body)
         if mode_enum is OutputMode.PHONE:
-            body, violations = _enforce_phone(body)
+            body, violations = _enforce_phone(
+                body, self._cfg.phone_max_lines, self._cfg.phone_max_sentence_chars
+            )
             notes.extend(violations)
 
         # 5. 权威级别：有非经验来源就算权威，否则算经验
@@ -181,23 +185,29 @@ def _strip_markdown(text: str) -> str:
     return cleaned.strip()
 
 
-def _enforce_phone(text: str) -> tuple[str, list[str]]:
-    """把文本压成符合电话模式的形态，返回 (新文本, 违规说明)。"""
+def _enforce_phone(text: str, max_lines: int = PHONE_MAX_LINES,
+                   max_sentence: int = PHONE_MAX_SENTENCE) -> tuple[str, list[str]]:
+    """把文本压成符合电话模式的形态，返回 (新文本, 违规说明)。
+
+    上限由调用方从配置传入（``config.answer.phone_max_lines`` /
+    ``phone_max_sentence_chars``）。写死在代码里会让那两个配置项变成摆设。
+    """
     violations: list[str] = []
     if any(token in text for token in _FORBIDDEN):
         violations.append("model emitted table/list markup; cleaned")
 
     sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
-    if len(sentences) > PHONE_MAX_LINES:
-        sentences = sentences[:PHONE_MAX_LINES]
-        violations.append(f"more than {PHONE_MAX_LINES} sentences; truncated")
+    if len(sentences) > max_lines:
+        sentences = sentences[:max_lines]
+        violations.append(f"more than {max_lines} sentences; truncated")
 
     out: list[str] = []
     for sentence in sentences:
-        if len(sentence) > PHONE_MAX_SENTENCE:
-            sentence = sentence[: PHONE_MAX_SENTENCE - 1].rstrip() + "…"
-            if "sentence over 60 chars; truncated" not in violations:
-                violations.append("sentence over 60 chars; truncated")
+        if len(sentence) > max_sentence:
+            sentence = sentence[: max_sentence - 1].rstrip() + "…"
+            note = f"sentence over {max_sentence} chars; truncated"
+            if note not in violations:
+                violations.append(note)
         out.append(sentence)
     return " ".join(out), violations
 

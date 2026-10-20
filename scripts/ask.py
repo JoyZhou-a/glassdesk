@@ -22,7 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from glassdesk.answer import flow  # noqa: E402
+from glassdesk.answer import flow, templates  # noqa: E402
 from glassdesk.answer.generator import AnswerGenerator  # noqa: E402
 from glassdesk.answer.llm import CachedLLM  # noqa: E402
 from glassdesk.config import ConfigError, load_settings  # noqa: E402
@@ -51,6 +51,8 @@ def main() -> int:
     setup_logging(settings, file=False)
 
     mode = OutputMode(args.mode)
+    templates.set_limits(settings.answer.phone_max_lines,
+                         settings.answer.phone_max_sentence_chars)
     store = MySQLStore(settings.services.mysql, database=settings.services.mysql.database)
     milvus = MilvusStore(settings.services.milvus)
     embedder = BGEEmbedder(settings.models.embedder, batch_size=1)

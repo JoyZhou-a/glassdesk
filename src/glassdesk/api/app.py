@@ -19,7 +19,7 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 
-from glassdesk.answer import flow
+from glassdesk.answer import flow, templates
 from glassdesk.answer.generator import AnswerGenerator
 from glassdesk.answer.llm import CachedLLM
 from glassdesk.api.schemas import AskRequest, AskResponse, HealthResponse, Timing, TokenUsage
@@ -51,6 +51,8 @@ class LivePipeline:
 
         self.settings = load_settings()
         setup_logging(self.settings)
+        templates.set_limits(self.settings.answer.phone_max_lines,
+                             self.settings.answer.phone_max_sentence_chars)
         started = time.perf_counter()
 
         self.store = MySQLStore(self.settings.services.mysql,

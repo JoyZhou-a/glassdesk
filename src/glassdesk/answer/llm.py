@@ -80,6 +80,9 @@ class CachedLLM:
                 api_key=self._cfg.api_key.get_secret_value(),
                 base_url=self._cfg.base_url,
                 timeout=self._cfg.timeout_s,
+                # 用 SDK 自带的指数退避重试，不要自己写循环：
+                # 自己写的重试往往漏掉 429 和 5xx 的区分。
+                max_retries=self._cfg.max_retries,
             )
         return self._client
 

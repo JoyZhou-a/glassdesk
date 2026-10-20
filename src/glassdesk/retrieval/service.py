@@ -164,6 +164,11 @@ class RetrievalService:
         if not use_rerank or self.reranker is None or len(pairs) < 2:
             return sorted(pairs, key=lambda p: p[0].score, reverse=True)
 
+        # 只把前 rerank_candidates 条送去重排：召回深度（top_k）和重排深度
+        # 是两个成本量，重排是 O(候选数) 的交叉编码，实测约 37ms/条。
+        # 不截断会让 top_k 一调大重排延迟就线性上涨。
+        pairs = pairs[: self.cfg.rerank_candidates]
+
         items = [(row["text"], (hit, row)) for hit, row in pairs]
         reranked = self.reranker.rerank(query, items)
         return [(payload[0], payload[1]) for payload, _score in reranked]

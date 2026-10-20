@@ -64,7 +64,10 @@ retrieval:
   hybrid:
     dense_weight: 0.7
     sparse_weight: 0.3
-  # 低于该分数视为"没有依据"，应触发拒答而不是硬答
+  # 重排分数下限。
+  # ⚠️ **答案链路不使用它**：M2 实测 11 条语料外问题全部拿到 0.4 以上，
+  #    阈值筛不掉，拒答改由生成侧（模型输出 INSUFFICIENT）负责。
+  #    当前仅评测脚本用它判断负面样例是否被正确拒绝，保留作为观测指标。
   min_rerank_score: 0.35
 
 answer:
@@ -72,8 +75,12 @@ answer:
   phone_max_lines: 3
   phone_max_sentence_chars: 60
   # 低于该置信度必须显式提示（对应 PRD 的 I6）
+  # ⚠️ 预留未接入：当前没有统一的"置信度"标量，low_confidence 由
+  #    "格式违规 / 证据含经验来源"等规则触发。等有统一的置信度估计再接入。
   low_confidence_threshold: 0.6
   # 售后理赔类强制转人工（对应 PRD US-04）
+  # ⚠️ 预留未接入：需要先有意图分类（M4c，因槽位路由已够用而暂缓）。
+  #    当前售后类靠生成侧的自然判断，未做硬拦截。
   force_human_intents:
     - after_sales
 
