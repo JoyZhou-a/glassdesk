@@ -41,18 +41,25 @@ ml = [
     "openpyxl>=3.1",
 ]
 
-# GPU 说明（重要）
-# ---------------
-# RTX 5060 Ti 是 Blackwell(sm_120)，需要 CUDA 12.8 的 torch 轮子。
-# 但国内下载 download.pytorch.org 与阿里云镜像实测只有 0.5 MB/s
-# （3.4 GB 需约 105 分钟），因此**当前先用 PyPI 的 CPU 版**跑通流程。
+# GPU 说明（重要，请先读完再跑 uv sync）
+# -------------------------------------
+# RTX 5060 Ti 是 Blackwell(sm_120)，需要 CUDA 12.8+ 的 torch 轮子。
 #
-# 等网络条件允许时，手动装 GPU 版并恢复索引配置：
-#   curl -L -C - -o torch.whl \
-#     "https://mirrors.aliyun.com/pytorch-wheels/cu128/torch-2.7.1%2Bcu128-cp312-cp312-win_amd64.whl"
-#   uv pip install --no-deps torch.whl
+# 实测：国内从 download.pytorch.org 拉取会**连接建立但不传数据**；
+# 阿里云 pytorch-wheels 镜像只有 0.54 MB/s（3.4 GB 需约 105 分钟）。
 #
-# 恢复索引时把下面两段取消注释即可：
+# 采用的办法：复用机器上已有的 conda 环境（bert_gpu，torch 2.13.0+cu130，
+# Python 3.12.13 与本项目 3.12.14 同一小版本，二进制兼容），
+# 把 torch / torchgen / functorch 复制进本项目的 .venv。
+#
+#   pwsh scripts/use_conda_torch.ps1
+#
+# ⚠️ `uv sync --extra ml` 会重新装回 PyPI 的 CPU 版 torch。
+#    每次 sync 之后都要重跑上面的脚本。
+#
+# 实测效果（275 条 chunk）：CPU 约 1.5 条/秒，CUDA 约 209 条/秒（≈140 倍）。
+#
+# 若将来能正常下载官方轮子，可改用下面两段（取消注释）：
 #   [[tool.uv.index]]
 #   name = "pytorch-cu128"
 #   url = "https://mirrors.aliyun.com/pytorch-wheels/cu128/"

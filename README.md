@@ -25,8 +25,9 @@
 其中 275 个子块已编码为向量写入 Milvus（dense 1024 维 + sparse）。
 `manual-tempering-scan` 是扫描件，等 M1c 的 OCR。
 
-> 编码目前跑在 **CPU** 上：CUDA 版 torch 在国内下载实测 0.5 MB/s（3.4 GB 需约 105 分钟），
-> 见 `pyproject.toml` 里的 GPU 说明。
+> 编码跑在 **GPU** 上（torch 2.13.0+cu130，复用机器上已有的 conda 环境）。
+> `uv sync --extra ml` 会换回 CPU 版，之后需重跑 `pwsh scripts/use_conda_torch.ps1`。
+> 实测：275 条 chunk 编码 CPU 约 3 分钟，GPU 约 1.3 秒（≈140 倍）。
 
 > 看不懂代码？先读 [`docs/10_代码导读.md`](docs/10_代码导读.md) —— 不用看 Python 也能理解系统怎么运转。
 

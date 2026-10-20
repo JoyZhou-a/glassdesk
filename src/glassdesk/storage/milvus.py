@@ -64,6 +64,17 @@ class MilvusStore:
     def collection(self) -> str:
         return self._collection
 
+    @property
+    def client(self):
+        """底层 MilvusClient。检索层需要它做 hybrid_search。"""
+        return self.connect()
+
+    def load(self) -> None:
+        """把集合载入内存，否则检索会报 collection not loaded。"""
+        client = self.connect()
+        if client.has_collection(self._collection):
+            client.load_collection(self._collection)
+
     # ------------------------------------------------------------------
     # 集合
     # ------------------------------------------------------------------
@@ -114,6 +125,7 @@ class MilvusStore:
             index_params=index_params,
         )
         log.info("集合 {} 已创建（dim={}）", self._collection, dim)
+        client.load_collection(self._collection)
         return True
 
     def drop_collection(self) -> None:
