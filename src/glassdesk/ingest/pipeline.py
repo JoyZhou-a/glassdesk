@@ -321,3 +321,85 @@ def prepare_all(store: MySQLStore, *, version: int = 1, write: bool = True) -> l
     for spec in load_manifest().values():
         results.append(prepare_document(store, spec, version=version, write=write))
     return results
+
+
+# ======================================================================
+# index：编码并写入 Milvus（M1b）
+# ======================================================================
+#: 只把 child chunk 写入向量库。父块不参与检索，只负责给模型提供上下文。
+_ACTIVE_CHILD_SQL = """
+SELECT chunk_id, text, page_no, clause
+FROM chunks
+WHERE doc_id = %s AND version = %s AND kind = 'child' AND status = 'active'
+ORDER BY ordinal
+"""
+
+
+def index_document(
+    store: MySQLStore,
+    milvus,
+    embedder,
+    doc_id: str,
+    *,
+    version: int = 1,
+    recreate: bool = False,
+) -> dict[str, int]:
+    """把某份文档的 active 子块编码并写入 Milvus。
+
+    Milvus 只存 ``id + doc_id + authority + page_no + clause + 两种向量``，
+    正文留在 MySQL —— 索引因此永远可以从 MySQL 重建。
+    """
+    doc = store.fetchone(
+        "SELECT authority, status FROM documents WHERE doc_id=%s AND version=%s",
+        (doc_id, version),
+    )
+    if doc is None:
+        raise IngestError(f"{doc_id} v{version} 未入库，先执行 prepare + activate")
+    if doc["status"] != "active":
+        raise IngestError(
+            f"{doc_id} v{version} 状态是 {doc['status']}，只有 active 才能建索引"
+        )
+
+    rows = store.fetchall(_ACTIVE_CHILD_SQL, (doc_id, version))
+    if not rows:
+        raise IngestError(f"{doc_id} v{version} 没有 active 子块，无法建索引")
+
+    milvus.ensure_collection(embedder.dim, recreate=recreate)
+    embeddings = embedder.encode_documents([r["text"] for r in rows])
+
+    payload = []
+    for row, vector in zip(rows, embeddings):
+        payload.append(
+            {
+                "id": row["chunk_id"],
+                "doc_id": doc_id,
+                "authority": doc["authority"],
+                "page_no": int(row["page_no"] or 0),
+                "clause": (row["clause"] or "")[:64],
+                "dense_vector": vector.dense,
+                "sparse_vector": vector.sparse,
+            }
+        )
+
+    written = milvus.upsert(payload)
+    milvus.flush()
+    log.info("index 完成 {} v{}：{} 条向量", doc_id, version, written)
+    return {"chunks": len(rows), "vectors": written, "milvus_total": milvus.count()}
+
+
+def index_all(store: MySQLStore, milvus, embedder, *, version: int = 1,
+              recreate: bool = False) -> list[dict[str, int]]:
+    results = []
+    first = True
+    for spec in load_manifest().values():
+        try:
+            results.append(
+                index_document(
+                    store, milvus, embedder, spec.doc_id,
+                    version=version, recreate=recreate and first,
+                )
+            )
+            first = False
+        except IngestError as exc:
+            log.warning("跳过 {}：{}", spec.doc_id, exc)
+    return results

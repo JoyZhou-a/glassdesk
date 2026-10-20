@@ -29,25 +29,38 @@ dev = [
     "httpx>=0.27",
 ]
 
-# 机器学习依赖单独一组：M0/M1 阶段不安装，等 M2 入库时再 `uv sync --extra ml`
+# 机器学习依赖单独一组：M0/M1a 阶段不安装，做索引时 `uv sync --extra ml`
+# 注意：**不装 milvus-model**。它的 BGEM3EmbeddingFunction 依赖 FlagEmbedding，
+# 加载时会尝试联网并长时间挂住；我们改为直接用 transformers 实现 dense/sparse。
 [project.optional-dependencies]
 ml = [
     "torch>=2.7",
     "transformers>=4.44,<5",
     "sentence-transformers>=3.0",
-    "milvus-model>=0.2.12",
     "pandas>=2.2",
     "openpyxl>=3.1",
 ]
 
-# RTX 5060 Ti 是 Blackwell(sm_120)，需要 CUDA 12.8 轮子，不能用默认 PyPI 的 CPU 版
-[[tool.uv.index]]
-name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
-explicit = true
-
-[tool.uv.sources]
-torch = [{ index = "pytorch-cu128" }]
+# GPU 说明（重要）
+# ---------------
+# RTX 5060 Ti 是 Blackwell(sm_120)，需要 CUDA 12.8 的 torch 轮子。
+# 但国内下载 download.pytorch.org 与阿里云镜像实测只有 0.5 MB/s
+# （3.4 GB 需约 105 分钟），因此**当前先用 PyPI 的 CPU 版**跑通流程。
+#
+# 等网络条件允许时，手动装 GPU 版并恢复索引配置：
+#   curl -L -C - -o torch.whl \
+#     "https://mirrors.aliyun.com/pytorch-wheels/cu128/torch-2.7.1%2Bcu128-cp312-cp312-win_amd64.whl"
+#   uv pip install --no-deps torch.whl
+#
+# 恢复索引时把下面两段取消注释即可：
+#   [[tool.uv.index]]
+#   name = "pytorch-cu128"
+#   url = "https://mirrors.aliyun.com/pytorch-wheels/cu128/"
+#   format = "flat"
+#   explicit = true
+#
+#   [tool.uv.sources]
+#   torch = [{ index = "pytorch-cu128" }]
 
 [build-system]
 requires = ["hatchling"]

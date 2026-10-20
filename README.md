@@ -13,7 +13,7 @@
 |---|---|---|
 | M0 | 骨架 / 配置 / 日志 / 测试 | ✅ 完成 |
 | **M1a** | 建表 / 五类 loader / 分源切分 / 写库（不写向量） | ✅ 完成 |
-| M1b | bge-m3 编码 + 写入 Milvus | ⬜ |
+| **M1b** | bge-m3 编码 + 写入 Milvus | ✅ 完成 |
 | M1c | OCR（扫描件）+ prepare/verify/activate/regress 完整流程 | ⬜ |
 | M2 | 检索（hybrid + 父子块 + rerank） | ⬜ |
 | M3 | 生成（电话/邮件双模式 + 引用 + 拒答） | ⬜ |
@@ -21,8 +21,12 @@
 | M5 | 前端（悬浮窗 / 邮件面板 / 管理页） | ⬜ |
 | M6 | 评测与调优 | ⬜ |
 
-**当前入库结果**：8 份文档 active，363 个 chunk（88 父块 + 275 子块）。
-其中 `manual-tempering-scan` 是扫描件，等 M1c 的 OCR。
+**当前入库结果**：8 份文档 active，363 个 chunk（88 父块 + 275 子块），
+其中 275 个子块已编码为向量写入 Milvus（dense 1024 维 + sparse）。
+`manual-tempering-scan` 是扫描件，等 M1c 的 OCR。
+
+> 编码目前跑在 **CPU** 上：CUDA 版 torch 在国内下载实测 0.5 MB/s（3.4 GB 需约 105 分钟），
+> 见 `pyproject.toml` 里的 GPU 说明。
 
 > 看不懂代码？先读 [`docs/10_代码导读.md`](docs/10_代码导读.md) —— 不用看 Python 也能理解系统怎么运转。
 

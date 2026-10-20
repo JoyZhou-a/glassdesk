@@ -54,6 +54,24 @@ def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def clip_utf8(text: str | None, max_bytes: int = 64, ellipsis: str = "…") -> str:
+    """按 **UTF-8 字节数**截断，而不是按字符数。
+
+    Milvus 的 VARCHAR ``max_length`` 是按字节校验的。实测：64 个字符的字符串
+    加上省略号后变成 66 字节，写入即被拒绝（``exceeds max length``）。
+    按字符截断看起来没问题，只有真正写库时才炸。
+    """
+    if not text:
+        return ""
+    raw = text.encode("utf-8")
+    if len(raw) <= max_bytes:
+        return text
+    budget = max_bytes - len(ellipsis.encode("utf-8"))
+    if budget <= 0:
+        return ""
+    return raw[:budget].decode("utf-8", "ignore") + ellipsis
+
+
 @dataclass(slots=True)
 class Chunk:
     """一条待入库的知识单元。"""

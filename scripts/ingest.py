@@ -20,7 +20,7 @@ from glassdesk.config import ConfigError, load_settings  # noqa: E402
 from glassdesk.ingest import pipeline  # noqa: E402
 from glassdesk.ingest.manifest import ManifestError, load_manifest  # noqa: E402
 from glassdesk.logger import setup_logging  # noqa: E402
-from glassdesk.storage import MySQLStore  # noqa: E402
+from glassdesk.storage import MilvusStore, MySQLStore  # noqa: E402
 
 
 def cmd_list(_args) -> int:
@@ -84,6 +84,36 @@ def cmd_activate(args, store) -> int:
     return 0
 
 
+def cmd_index(args, store, settings) -> int:
+    """编码并写入 Milvus。这是 M1b 的核心动作，第一次会加载 bge-m3。"""
+    from glassdesk.retrieval.embedder import BGEEmbedder
+
+    embedder = BGEEmbedder(settings.models.embedder, batch_size=args.batch_size)
+    milvus = MilvusStore(
+        settings.services.milvus, database=settings.services.milvus.database
+    )
+    try:
+        if args.all:
+            results = pipeline.index_all(
+                store, milvus, embedder, version=args.version, recreate=args.recreate
+            )
+            for item in results:
+                print(f"  [OK] {item}")
+        else:
+            stats = pipeline.index_document(
+                store, milvus, embedder, args.doc_id,
+                version=args.version, recreate=args.recreate,
+            )
+            print(f"  [OK] {stats}")
+        print(f"\nMilvus 集合状态：{milvus.describe()}")
+    except pipeline.IngestError as exc:
+        print(f"  [FAIL] {exc}")
+        return 1
+    finally:
+        milvus.close()
+    return 0
+
+
 def _print_chunk(chunk) -> None:
     text = chunk.text.replace("\n", " ⏎ ")
     if len(text) > 150:
@@ -128,6 +158,14 @@ def main() -> int:
     group2.add_argument("--all", action="store_true")
     p_activate.add_argument("--version", type=int, default=1)
 
+    p_index = sub.add_parser("index", help="编码并写入 Milvus（需要 ml 依赖）")
+    group3 = p_index.add_mutually_exclusive_group(required=True)
+    group3.add_argument("--doc-id")
+    group3.add_argument("--all", action="store_true")
+    p_index.add_argument("--version", type=int, default=1)
+    p_index.add_argument("--recreate", action="store_true", help="重建集合（清空已有向量）")
+    p_index.add_argument("--batch-size", type=int, default=8, help="编码批大小，显存紧就调小")
+
     args = parser.parse_args()
 
     if args.command == "list":
@@ -142,6 +180,8 @@ def main() -> int:
 
     store = MySQLStore(settings.services.mysql, database=settings.services.mysql.database)
     try:
+        if args.command == "index":
+            return cmd_index(args, store, settings)
         handler = {"prepare": cmd_prepare, "dump": cmd_dump, "activate": cmd_activate}
         return handler[args.command](args, store)
     except ManifestError as exc:

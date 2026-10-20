@@ -20,7 +20,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from glassdesk.ingest.models import Block, BlockKind, Chunk, sha256_text
+from glassdesk.ingest.models import Block, BlockKind, Chunk, clip_utf8, sha256_text
 
 _SENTENCE_END = re.compile(r"(?<=[.!?;])\s+")
 
@@ -368,6 +368,5 @@ def _first_clause(blocks: list[Block]) -> str | None:
 
 
 def _clip(text: str | None, limit: int = 64) -> str:
-    if not text:
-        return ""
-    return text if len(text) <= limit else text[: limit - 1] + "…"
+    """按 UTF-8 字节截断——Milvus 的 VARCHAR 按字节校验长度。"""
+    return clip_utf8(text, limit)
