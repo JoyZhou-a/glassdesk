@@ -39,7 +39,7 @@ AUTHORITY_BY_CATEGORY: dict[str, tuple[Authority, ...] | None] = {
     "spec": (Authority.MANUAL,),
     "config": (Authority.MANUAL,),
     "logistics": (Authority.MANUAL,),
-    "selection": (Authority.STANDARD, Authority.MANUAL),
+    "selection": (Authority.STANDARD, Authority.MANUAL, Authority.EXPERIENCE),
     "after_sales": (Authority.EXPERIENCE, Authority.MANUAL),
     "negative": None,
 }
@@ -77,11 +77,21 @@ def evaluate(service: RetrievalService, items: list[dict], *, use_rerank: bool,
         rank = next(
             (i + 1 for i, cid in enumerate(returned) if cid in evidence), None
         )
-        per_category[item["category"]].append({"rejected": None, "rank": rank})
+        record: dict = {"rejected": None, "rank": rank}
+        if rank is None:
+            record["miss"] = {
+                "question": item["question"],
+                "expected": list(evidence),
+                "got": returned,
+                "note": item.get("note", ""),
+            }
+        per_category[item["category"]].append(record)
 
+    misses = [r["miss"] for rows in per_category.values() for r in rows if "miss" in r]
     return {
         "per_category": {cat: _summarise(rows, k) for cat, rows in per_category.items()},
         "overall": _summarise([r for rows in per_category.values() for r in rows], k),
+        "misses": misses,
         "latency": {
             "p50": statistics.median(latencies),
             "p95": _percentile(latencies, 95),
@@ -165,6 +175,17 @@ def main() -> int:
 
     report = _render(runs, args.k, args.no_rerank)
     print(report)
+
+    # 未命中的题是最有信息量的部分：说明是"检索不到"还是"排序错了"
+    for name, data in runs.items():
+        misses = data.get("misses") or []
+        if not misses:
+            continue
+        print(f"\n=== {name} 未命中 {len(misses)} 条（前 6 条）===")
+        for miss in misses[:6]:
+            print(f"\n  Q: {miss['question']}")
+            print(f"     期望 {miss['expected'][:1]}  ({miss['note']})")
+            print(f"     实得 {miss['got'][:3]}")
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     stamp = time.strftime("%Y%m%d_%H%M%S")
