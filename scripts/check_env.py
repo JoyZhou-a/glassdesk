@@ -20,16 +20,23 @@ from glassdesk.logger import setup_logging  # noqa: E402
 
 OK = "[ OK ]"
 FAIL = "[FAIL]"
+WARN = "[WARN]"
 
 
 class Report:
     def __init__(self) -> None:
         self.failed = 0
+        self.warned = 0
 
     def add(self, name: str, ok: bool, detail: str = "") -> None:
         if not ok:
             self.failed += 1
         print(f"{OK if ok else FAIL} {name:<22} {detail}")
+
+    def warn(self, name: str, detail: str = "") -> None:
+        """警告：不计入失败，但必须显式说出来。"""
+        self.warned += 1
+        print(f"{WARN} {name:<22} {detail}")
 
 
 def check_config(rep: Report):
@@ -135,6 +142,37 @@ def check_llm(rep: Report, settings):
         rep.add("LLM", False, f"{cfg.base_url} -> {exc}")
 
 
+def check_torch(rep: Report) -> None:
+    """检查 torch 是 CUDA 版还是 CPU 版。
+
+    为什么需要这一项：本项目的 torch 是从 conda 环境复制进 .venv 的
+    （官方 CUDA 轮子在国内下不动），而 ``uv sync`` 会把它换回 PyPI 的 CPU 版。
+    换回之后**不会报任何错**，只是编码从约 209 条/秒掉到 1.5 条/秒——
+    表现是"怎么突然变慢了"，很难第一时间想到是 torch 被换了。
+    """
+    try:
+        import torch
+    except ImportError:
+        rep.warn("torch", "未安装（M1a 之前的里程碑不需要）；索引/检索功能不可用")
+        return
+
+    version = torch.__version__
+    if not torch.cuda.is_available():
+        rep.warn(
+            "torch",
+            f"{version} 是 CPU 版 → GPU 不可用（编码会慢约 140 倍）。"
+            "跑 pwsh scripts/use_conda_torch.ps1 修复",
+        )
+        return
+
+    name = torch.cuda.get_device_name(0)
+    arch = torch.cuda.get_arch_list()
+    if "sm_120" not in arch:
+        rep.warn("torch", f"{version} CUDA 可用，但架构表里没有 sm_120（BF16/FP16 可能退化）")
+        return
+    rep.add("torch", True, f"{version} | {name} | sm_120")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="GlassDesk 环境自检")
     parser.add_argument("--skip-llm", action="store_true", help="跳过 LLM 调用（省 token）")
@@ -152,6 +190,7 @@ def main() -> int:
 
     rep = Report()
     check_models(rep, settings)
+    check_torch(rep)
     check_mysql(rep, settings)
     check_redis(rep, settings)
     check_milvus(rep, settings)
@@ -160,8 +199,11 @@ def main() -> int:
 
     print("=" * 72)
     if rep.failed:
-        print(f"结果：{rep.failed} 项失败")
+        print(f"结果：{rep.failed} 项失败" + (f"，{rep.warned} 项警告" if rep.warned else ""))
         return 1
+    if rep.warned:
+        print(f"结果：全部通过，但有 {rep.warned} 项警告（见上）")
+        return 0
     print("结果：全部通过")
     return 0
 
