@@ -156,22 +156,29 @@ def _summarise(rows: list[dict], llm_stats: dict) -> dict:
     for cat, items in sorted(by_cat.items()):
         n = len(items)
         state_ok = sum(1 for i in items if i["state_ok"])
-        cited = sum(1 for i in items if i["has_citation"])
+        # 引用覆盖率只在实际给出答案的题上统计：追问和拒答本来就不该有出处，
+        # 把它们算进分母会把"正确地追问"误判成"缺引用"。
+        answered = [i for i in items if i["status"] == "answer"]
+        cited = sum(1 for i in answered if i["has_citation"])
         rates = [i["keyword_rate"] for i in items if i["keyword_rate"] is not None]
         kw = sum(rates) / len(rates) if rates else 0.0
-        summary[cat] = {"n": n, "state_ok": state_ok, "cited": cited, "keyword_rate": kw}
+        summary[cat] = {"n": n, "state_ok": state_ok, "cited": cited,
+                         "answered": len(answered),
+                         "cited_rate": (cited / len(answered)) if answered else 0.0,
+                         "keyword_rate": kw}
         lines.append(
-            f"{cat:<12}{n:>6}{state_ok / n * 100:>8.0f}%{cited / n * 100:>8.0f}%{kw * 100:>8.0f}%"
+            f"{cat:<12}{n:>6}{state_ok / n * 100:>8.0f}%{(cited / len(answered) * 100) if answered else 0:>8.0f}%{kw * 100:>8.0f}%"
         )
 
     total = len(rows)
     ok = sum(1 for r in rows if r["state_ok"])
-    cited = sum(1 for r in rows if r["has_citation"])
+    all_answered = [r for r in rows if r["status"] == "answer"]
+    cited = sum(1 for r in all_answered if r["has_citation"])
     rates = [r["keyword_rate"] for r in rows if r["keyword_rate"] is not None]
     kw = sum(rates) / len(rates) if rates else 0.0
     lines += [
         "-" * 72,
-        f"{'合计':<12}{total:>6}{ok / total * 100:>8.0f}%{(cited / total * 100):>8.0f}%{kw * 100:>8.0f}%",
+        f"{'合计':<12}{total:>6}{ok / total * 100:>8.0f}%{(cited / len(all_answered) * 100) if all_answered else 0:>8.0f}%{kw * 100:>8.0f}%",
         "",
         f"LLM：调用 {llm_stats['calls']} 次 / 缓存命中 {llm_stats['cache_hits']} 次 / "
         f"输入 {llm_stats['prompt_tokens']} tokens / 输出 {llm_stats['completion_tokens']} tokens",
