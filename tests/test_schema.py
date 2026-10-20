@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from glassdesk.ingest import schema
@@ -16,8 +18,41 @@ from glassdesk.storage.mysql import safe_ident
 # 单元测试：DDL 文本
 # ======================================================================
 def test_ddl_has_four_tables_in_dependency_order():
-    assert schema.EXPECTED_TABLES == ("documents", "chunks", "ingest_runs", "app_meta")
-    assert len(schema.statements()) == 4
+    assert schema.EXPECTED_TABLES == (
+        "documents", "chunks", "ingest_runs", "app_meta",
+        "capability", "pricing", "leadtime",
+    )
+    assert len(schema.statements()) == 7
+
+
+def test_retrieval_and_structured_tables_are_separated():
+    """两类表职责不同：向量检索用 documents/chunks，槽位通道用三张结构化表。
+
+    分开的意义：尺寸类问题在向量空间里分不开（M2 实测 Recall@5 只有 70%），
+    必须走结构化查询；混在一起会让人误以为 chunks 就够了。
+    """
+    assert schema.RETRIEVAL_TABLES == ("documents", "chunks")
+    assert schema.STRUCTURED_TABLES == ("capability", "pricing", "leadtime")
+    assert set(schema.RETRIEVAL_TABLES).isdisjoint(schema.STRUCTURED_TABLES)
+
+
+def test_price_table_has_cost_price_but_sql_never_selects_it():
+    """成本价要入库（用于验证脱敏是否生效），但**查询 SQL 里绝不能出现**。
+
+    只检查 SQL 语句块（三引号内的内容），不检查注释——注释里当然会提到这个词。
+    """
+    import re
+
+    assert "cost_price_aud_m2" in schema.PRICING
+
+    source = (Path(__file__).resolve().parents[1]
+              / "src" / "glassdesk" / "routing" / "structured.py").read_text(encoding="utf-8")
+    sql_blocks = re.findall(r'"""(.*?)"""', source, re.S)
+    # 只挑真正的 SQL：以 SELECT 开头。模块说明也是三引号，不能用它评判。
+    selects = [b.strip() for b in sql_blocks if b.strip().upper().startswith("SELECT")]
+    assert selects, "没找到任何 SELECT 语句，测试本身失效了"
+    for block in selects:
+        assert "cost_price" not in block.lower(), f"SQL 里出现了成本价：{block[:120]}"
 
 
 def test_all_ddl_are_idempotent():
