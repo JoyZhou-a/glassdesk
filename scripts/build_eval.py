@@ -277,10 +277,30 @@ def _experience_questions(chunks: list[dict]) -> list[Item]:
                 question=entry["question"],
                 ground_truth=" ".join(entry["answer_en"].split())[:200],
                 evidence_chunk_ids=[chunk_id],
+                # 题面里提到了尺寸但没给全（比如"3000 x 3000 的板能做吗"没说厚度），
+                # 正确答案就是**追问**，不是硬答。标签必须反映这一点，
+                # 否则会把"正确追问"记成"答错"，让报告数字无故偏低。
+                expected_state=_expected_state(entry["question"]),
                 note=f"experience {entry['entry_id']}",
             )
         )
     return items
+
+
+def _expected_state(question: str) -> str:
+    """判断这类题应当"作答"还是"追问"。
+
+    只用在经验/标准这两类**走向量检索**的题上：
+    - 题面没有尺寸参数 → 应该能直接从文档答 → ``ok``
+    - 题面提到尺寸但不全 → 正确行为是追问 → ``need_slot``
+    """
+    from glassdesk.routing import slots as S
+
+    extracted = S.extract(question)
+    if extracted.is_empty:
+        return "ok"
+    validation = S.validate(extracted, need=("thickness_mm", "width_mm", "height_mm"))
+    return "ok" if validation.can_query else "need_slot"
 
 
 #: 标准摘要的客户问法（人工撰写，因为要像客户在问，不能照抄标题）
