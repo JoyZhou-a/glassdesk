@@ -30,6 +30,13 @@ ROOT = Path(__file__).resolve().parents[1]
 SEEDS = ROOT / "data" / "seeds"
 OUT = ROOT / "data" / "eval" / "eval_set.jsonl"
 
+COATING_WORD = {
+    "none": "",
+    "low_e_soft": "with low-e soft coat",
+    "low_e_hard": "with low-e hard coat",
+    "tinted": "tinted",
+}
+
 PROCESS_WORD = {
     "toughened": "toughened",
     "annealed": "annealed",
@@ -169,29 +176,44 @@ def _spec_questions(chunks: list[dict]) -> list[Item]:
 
 
 def _config_questions(chunks: list[dict]) -> list[Item]:
-    """配置与价格：每题绑到报价表一行，答案是单价。"""
+    """配置与价格：每题绑到报价表一行，答案是单价。
+
+    **题面必须包含 shape / variant / coating**：同一厚度下平板与异形、无膜与有膜
+    是不同的报价行（8mm 平板 145、8mm 异形 310）。题面不写清楚就会生成多个文字
+    完全相同、答案却不同的题目，系统无法区分，评出来的分是假的。
+    """
     items: list[Item] = []
     for chunk in chunks:
         f = parse_pairs(chunk["text"])
         if "Unit price (AUD/m2, incl GST)" not in f:
             continue
         process = f.get("Process", "")
+        shape = f.get("Shape", "flat")
         thickness = f.get("Thickness (mm)", "")
         variant = f.get("Variant")
+        coating = f.get("Coating", "none")
         price = f["Unit price (AUD/m2, incl GST)"]
-        word = PROCESS_WORD.get(process, process)
-        label = f"{thickness}mm {word}"
+
+        label = f"{thickness}mm "
+        if shape == "bent":
+            label += "bent "
+        label += PROCESS_WORD.get(process, process)
         if variant:
             label += f" ({variant})"
+        coat_word = COATING_WORD.get(coating, "")
+        if coat_word:
+            label += f" {coat_word}"
+        label += " glass"
+
         items.append(
             Item(
                 item_id="",
                 category="config",
                 channel="email",
-                question=f"How much per square metre for {label} glass, including GST?",
+                question=f"How much per square metre for {label}, including GST?",
                 ground_truth=f"AUD {price} per m2 including GST.",
                 evidence_chunk_ids=[chunk["chunk_id"]],
-                note="price row",
+                note=f"price row: {process}/{shape}/{thickness}/{variant or '-'}/{coating}",
             )
         )
     return items
