@@ -39,14 +39,38 @@ def capability_phone(slots: Slots, verdict: CapabilityVerdict) -> list[str]:
             lines.append(_clip(f"Tolerance is plus or minus {tol}mm."))
         return lines[:PHONE_MAX_LINES]
 
-    # 不行的时候，必须给出上限和替代方案——客服要的不是"不行"
-    lines = [_clip(f"No, that cannot be made as one piece. {verdict.reason}.")]
+    # 不行的时候：结论、原因、上限/替代方案，各占一行。
+    # 塞进一句会超过 60 字符，截断后关键数字会丢（实测出现过 "exceeds …"）。
+    lines = [_clip("No, that cannot be made in one piece.")]
+    reason = verdict.reason.strip()
+    if reason:
+        lines.append(_clip(reason[0].upper() + reason[1:] + "."))
     mx = verdict.limits.get("max_width_mm")
     my = verdict.limits.get("max_height_mm")
     if mx and my:
-        lines.append(_clip(f"The maximum for this thickness is {mx} by {my}mm."))
-    lines.append(_clip("We can split it into two panels, or use a thinner glass."))
+        lines.append(_clip(f"Max is {mx} by {my}mm, or split into two."))
+    else:
+        lines.append(_clip("We can split it or use a different thickness."))
     return lines[:PHONE_MAX_LINES]
+
+
+def unsupported(reason: str, mode: str = "phone") -> list[str] | str:
+    """规格本身不存在时的回答。
+
+    这**不是**"要问工程师"——"我们不生产 7mm" 是个确定答案，
+    直接说清楚比转人工好，而且要告诉客户有哪些选择。
+    """
+    sentence = reason.strip()
+    sentence = (sentence[0].upper() + sentence[1:]) if sentence else \
+        "That specification is not available."
+    if mode == "email":
+        return (
+            "**Specification check**\n\n"
+            f"- {sentence}\n"
+            "- Source: Capability Matrix 2026\n"
+        )
+    return [_clip("We do not make that specification."),
+            _clip(sentence + ".")][:PHONE_MAX_LINES]
 
 
 def capability_email(slots: Slots, verdict: CapabilityVerdict) -> str:
