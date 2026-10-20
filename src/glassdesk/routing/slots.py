@@ -264,8 +264,8 @@ def validate(slots: Slots, *, need: tuple[str, ...] = ("thickness_mm",)) -> Vali
         if slots.thickness_mm not in allowed:
             return Validation(
                 "bad_value", missing=[],
-                reason=f"{slots.process} 没有 {slots.thickness_mm}mm 这个规格"
-                       f"（可选 {', '.join(str(a) for a in allowed)}）",
+                reason=f"{slots.process} is not made in {slots.thickness_mm:g}mm"
+                       f" (available: {', '.join(f'{a:g}' for a in allowed)})",
             )
     return Validation("complete")
 

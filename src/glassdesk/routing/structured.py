@@ -72,7 +72,7 @@ class StructuredLookup:
     def check_capability(self, slots: Slots) -> CapabilityVerdict:
         """判定"能不能做"。四个判据：宽、高、面积、最小尺寸，异形再加弯曲半径。"""
         if slots.thickness_mm is None:
-            return CapabilityVerdict(False, "没有厚度，无法判断")
+            return CapabilityVerdict(False, "thickness is missing, cannot check")
 
         process = slots.process or "toughened"
         shape = slots.shape or "flat"
@@ -80,7 +80,7 @@ class StructuredLookup:
         if row is None:
             return CapabilityVerdict(
                 False,
-                f"没有 {process} {shape} {slots.thickness_mm}mm 这个规格",
+                f"no such specification: {process} {shape} {slots.thickness_mm}mm",
             )
 
         limits = {
@@ -96,19 +96,19 @@ class StructuredLookup:
         width, height = slots.width_mm, slots.height_mm
         if width is not None and width > limits["max_width_mm"]:
             return CapabilityVerdict(
-                False, f"宽度 {width:.0f}mm 超过上限 {limits['max_width_mm']}mm", row, limits
+                False, f"width {width:.0f}mm exceeds the {limits['max_width_mm']}mm limit", row, limits
             )
         if height is not None and height > limits["max_height_mm"]:
             return CapabilityVerdict(
-                False, f"高度 {height:.0f}mm 超过上限 {limits['max_height_mm']}mm", row, limits
+                False, f"height {height:.0f}mm exceeds the {limits['max_height_mm']}mm limit", row, limits
             )
         if width is not None and width < limits["min_width_mm"]:
             return CapabilityVerdict(
-                False, f"宽度 {width:.0f}mm 低于最小 {limits['min_width_mm']}mm", row, limits
+                False, f"width {width:.0f}mm is below the {limits['min_width_mm']}mm minimum", row, limits
             )
         if height is not None and height < limits["min_height_mm"]:
             return CapabilityVerdict(
-                False, f"高度 {height:.0f}mm 低于最小 {limits['min_height_mm']}mm", row, limits
+                False, f"height {height:.0f}mm is below the {limits['min_height_mm']}mm minimum", row, limits
             )
 
         if width is not None and height is not None:
@@ -116,12 +116,12 @@ class StructuredLookup:
             if area > limits["max_area_m2"]:
                 return CapabilityVerdict(
                     False,
-                    f"面积 {area}m2 超过上限 {limits['max_area_m2']}m2"
-                    f"（长宽都没超，但面积超了）",
+                    f"area {area}m2 exceeds the {limits['max_area_m2']}m2 limit"
+                    "(width and height are both within limits - the area is what fails)",
                     row, limits,
                 )
 
-        return CapabilityVerdict(True, "在加工范围内", row, limits)
+        return CapabilityVerdict(True, "within capability", row, limits)
 
     # ------------------------------------------------------------------
     # 报价

@@ -159,7 +159,7 @@ def test_capability_rejects_oversize_width():
     s = S.extract("12mm toughened 3000 wide by 3000 high")
     verdict = lookup_with(CAP_ROW).check_capability(s)
     assert verdict.can_make is False
-    assert "宽度" in verdict.reason
+    assert "width" in verdict.reason
     # 不行的时候必须带回上限，客服要能说"最大只能做多少"
     assert verdict.limits["max_width_mm"] == 2440
 
@@ -170,7 +170,7 @@ def test_capability_rejects_area_even_when_dimensions_pass():
     s = S.extract("12mm toughened 2400 wide by 3000 high")  # 7.2 m2 > 5.0
     verdict = lookup_with(row).check_capability(s)
     assert verdict.can_make is False
-    assert "面积" in verdict.reason
+    assert "area" in verdict.reason
 
 
 def test_capability_unknown_spec_returns_no_limits():
@@ -260,7 +260,7 @@ def test_phone_answer_at_most_three_lines():
 
 def test_phone_answer_sentences_within_limit():
     verdict = CapabilityVerdict(
-        False, "宽度 3000mm 超过上限 2440mm",
+        False, "width 3000mm exceeds the 2440mm limit",
         limits={"max_width_mm": 2440, "max_height_mm": 4800},
     )
     for line in templates.capability_phone(_slots(), verdict):
@@ -270,7 +270,7 @@ def test_phone_answer_sentences_within_limit():
 def test_phone_refusal_mentions_limit_and_alternative():
     """答"不行"时必须给上限和替代方案——只说不行的话客服没法用。"""
     verdict = CapabilityVerdict(
-        False, "宽度 3000mm 超过上限 2440mm",
+        False, "width 3000mm exceeds the 2440mm limit",
         limits={"max_width_mm": 2440, "max_height_mm": 4800},
     )
     text = " ".join(templates.capability_phone(_slots(), verdict))
