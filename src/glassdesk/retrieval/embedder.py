@@ -157,8 +157,14 @@ class BGEEmbedder:
 
         with torch.no_grad():
             hidden = self._model(**inputs).last_hidden_state          # [B, L, H]
-            dense = F.normalize(hidden[:, 0], p=2, dim=1)             # [CLS] + 归一化
-            sparse_w = F.relu(self._sparse_head(hidden)).squeeze(-1)  # [B, L]
+            # 模型在 CUDA 上以 fp16 运行，但池化与稀疏头统一转 fp32：
+            # ① 稀疏头权重是 fp32，直接和 fp16 隐藏态相乘会报
+            #    "mat1 and mat2 must have the same dtype"
+            # ② fp16 下 normalize 与 relu 更容易丢精度
+            # 代价只是一次张量类型转换，可以忽略。
+            pooled = hidden.float()
+            dense = F.normalize(pooled[:, 0], p=2, dim=1)              # [CLS] + 归一化
+            sparse_w = F.relu(self._sparse_head(pooled)).squeeze(-1)   # [B, L]
 
         dense_np = dense.float().cpu().tolist()
         sparse_np = sparse_w.float().cpu().tolist()
