@@ -15,7 +15,7 @@
     margin:0; background:var(--bg); color:var(--ink);
     font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
   }
-  .wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px}
+  .wrap{max-width:860px;margin:0 auto;padding:18px 14px 60px}
   header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
   h1{font-size:20px;margin:0;letter-spacing:-.01em}
   .sub{color:var(--muted);font-size:13px}
@@ -26,9 +26,9 @@
   .pill.ok{color:var(--ok);border-color:#b7e0c3;background:#f0fbf3}
   .pill.bad{color:var(--bad);border-color:#f3c2be;background:#fdf3f2}
 
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-top:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-top:12px}
   textarea{
-    width:100%;min-height:74px;resize:vertical;padding:12px 14px;border-radius:10px;
+    width:100%;min-height:46px;resize:vertical;padding:10px 12px;border-radius:10px;
     border:1px solid var(--line);font:inherit;color:inherit;background:#fff;outline:none;
   }
   textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #1f6feb1a}
@@ -46,7 +46,12 @@
   .ghost{border:1px solid var(--line);background:#fff;color:var(--muted);font-weight:500;
          border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer}
   .ghost:hover{border-color:var(--accent);color:var(--accent)}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .ex{margin-top:12px}
+  .ex summary{cursor:pointer;color:var(--muted);font-size:12.5px;list-style:none}
+  .ex summary::-webkit-details-marker{display:none}
+  .ex summary::before{content:"▸ ";color:var(--accent)}
+  .ex[open] summary::before{content:"▾ "}
 
   .badge{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:6px}
   .b-answer{color:var(--ok);background:#eaf7ee}
@@ -56,7 +61,7 @@
   .b-escalate,.b-service_error{color:var(--bad);background:#fdeceb}
   .meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12.5px;margin-top:12px}
   .meta b{color:var(--ink);font-weight:600}
-  .answer{margin:14px 0 0;white-space:pre-wrap;font-size:15.5px}
+  .answer{margin:10px 0 0;white-space:pre-wrap;font-size:15.5px}
   .answer.phone{font-size:17px;line-height:1.7}
   .cite{margin-top:12px;font-size:12.5px;color:var(--muted)}
   .cite code{background:#f2f4f7;padding:2px 7px;border-radius:5px;margin-right:6px}
@@ -86,7 +91,10 @@
       <button class="btn" id="ask">提问</button>
       <span class="sub" id="hint">Ctrl/⌘ + Enter 提交</span>
     </div>
-    <div class="chips" id="examples"></div>
+    <details class="ex">
+      <summary>示例问题</summary>
+      <div class="chips" id="examples"></div>
+    </details>
   </div>
 
   <div id="out"></div>
@@ -178,7 +186,9 @@ async function ask(){
       out.prepend(box);
       return;
     }
+    out.querySelectorAll(".card").forEach(c => c.classList.remove("hist"));
     out.prepend(render(await res.json(), false));
+    window.scrollTo({top: 0, behavior: "smooth"});
   } catch (e){
     const box = document.createElement("div");
     box.className = "card err";
@@ -190,6 +200,10 @@ async function ask(){
 }
 
 $("#ask").onclick = ask;
+
+// 支持 ?q=问题 打开即问，方便演示和分享链接
+const preset = new URLSearchParams(location.search).get("q");
+if (preset) { $("#q").value = preset; ask(); }
 $("#q").addEventListener("keydown", e => {
   if ((e.metaKey || e.ctrlKey) && e.key === "Enter") ask();
 });

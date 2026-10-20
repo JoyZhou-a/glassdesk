@@ -249,3 +249,30 @@ uv run pytest -m integration -v      # 连通性测试（需要真实服务）
 uv run python scripts/check_env.py   # 环境自检
 uv sync --extra ml                   # 需要 torch 时（M2 之后）
 ```
+
+## 变成桌面悬浮窗
+
+日常用的时候不该开浏览器找标签页。双击桌面图标，屏幕右侧会弹出一个
+**420×660 的小窗，浮在邮件和网页上面**：
+
+```powershell
+pwsh scripts/install_shortcut.ps1          # 在桌面创建图标
+pwsh scripts/install_shortcut.ps1 -Startup # 顺便开机自启
+```
+
+- 后端没跑时**会自动拉起来**（约 7 秒，含模型预热），已经在跑就直接复用
+- 关掉窗口 = 退出；由它拉起的后端会一起停
+- 换尺寸：`.\.venv\Scripts\python.exe scripts/overlay.py --size 460x720`
+- 打开即问（演示用）：`--question "What glass for a pool fence?"`
+
+原理：用 Edge 的 `--app` 模式开一个**没有地址栏和标签页**的独立窗口，
+再用 Win32 `SetWindowPos` 把它设为置顶。**零新增依赖**——Edge 是系统自带的。
+
+### 实现上踩的四个坑
+
+| 现象 | 原因 | 修法 |
+|---|---|---|
+| 日志说置顶、实际不浮 | `HWND_TOPMOST` 是 -1，ctypes 没声明参数类型时按 32 位传，被零扩展 | 显式声明 `argtypes`，用全 1 的指针值 |
+| 刚打开就自己退出 | Edge 加载过程中会**替换窗口**，中间有 1–2 秒找不到 | 每轮重新找窗口；连续 6 秒找不到才判定关闭 |
+| 把用户的浏览器窗口改了尺寸 | 只按标题匹配，抓到用户自己开着的 GlassDesk 标签页 | 启动前记录已有窗口，只接受**新出现的** |
+| `--window-size` 不生效 | Edge 会记住 profile 里上次的窗口大小 | 窗口出现后自己调 `SetWindowPos` 设尺寸 |
