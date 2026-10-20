@@ -87,11 +87,11 @@ def decide(question: str) -> Route:
         if asking_capability and _matches(question, SIZE_HINTS):
             return Route(
                 "ask",
-                "问到了尺寸但没给数字，必须追问",
+                "size question without numbers; must ask back",
                 extracted,
                 ["thickness_mm", "width_mm", "height_mm"],
             )
-        return Route("documents", "没有抽到尺寸参数", extracted)
+        return Route("documents", "no size parameters found", extracted)
 
     lowered = question.lower()
     wants_price = _matches(lowered, PRICE_HINTS)
@@ -101,21 +101,21 @@ def decide(question: str) -> Route:
         need = ("thickness_mm",)
         validation = S.validate(extracted, need=need)
         if validation.can_query:
-            return Route("price", "有厚度，可查报价", extracted)
+            return Route("price", "thickness present; price lookup", extracted)
         return Route("ask", validation.reason, extracted, validation.missing)
 
     if wants_time:
         need = ("thickness_mm",)
         validation = S.validate(extracted, need=need)
         if validation.can_query:
-            return Route("leadtime", "有厚度，可查交期", extracted)
+            return Route("leadtime", "thickness present; lead time lookup", extracted)
         return Route("ask", validation.reason, extracted, validation.missing)
 
     # 默认按"能不能做"处理，需要宽高
     need = ("thickness_mm", "width_mm", "height_mm")
     validation = S.validate(extracted, need=need)
     if validation.can_query:
-        return Route("capability", "尺寸齐全，可查能力矩阵", extracted)
+        return Route("capability", "dimensions complete; capability lookup", extracted)
     if validation.status == "bad_value":
         return Route("unsupported", validation.reason, extracted)
     return Route("ask", validation.reason, extracted, validation.missing)

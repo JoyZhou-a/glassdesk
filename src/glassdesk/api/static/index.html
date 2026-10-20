@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GlassDesk · 玻璃行业知识助手</title>
+<title>GlassDesk · Glass knowledge assistant</title>
 <style>
   :root{
     --bg:#f6f7f9; --card:#fff; --ink:#14181f; --muted:#5f6875; --line:#e3e7ec;
@@ -77,22 +77,22 @@
 <div class="wrap">
   <header>
     <h1>GlassDesk</h1>
-    <span class="sub">玻璃加工知识助手 · 客服电话/邮件双模式</span>
-    <span class="pill" id="health">连接中…</span>
+    <span class="sub">Glass knowledge assistant · phone &amp; email modes</span>
+    <span class="pill" id="health">Connecting…</span>
   </header>
 
   <div class="card">
     <textarea id="q" placeholder="Ask something, e.g. What glass do I need for a pool fence?"></textarea>
     <div class="row">
       <div class="seg" id="mode">
-        <button data-v="phone" aria-pressed="true">电话模式</button>
-        <button data-v="email" aria-pressed="false">邮件模式</button>
+        <button data-v="phone" aria-pressed="true">Phone</button>
+        <button data-v="email" aria-pressed="false">Email</button>
       </div>
-      <button class="btn" id="ask">提问</button>
-      <span class="sub" id="hint">Ctrl/⌘ + Enter 提交</span>
+      <button class="btn" id="ask">Ask</button>
+      <span class="sub" id="hint">Ctrl/⌘ + Enter to submit</span>
     </div>
     <details class="ex">
-      <summary>示例问题</summary>
+      <summary>Example questions</summary>
       <div class="chips" id="examples"></div>
     </details>
   </div>
@@ -117,12 +117,12 @@ fetch("/api/health").then(r => r.json()).then(h => {
   const el = $("#health");
   if (h.ok){
     el.className = "pill ok";
-    el.textContent = `kb v${h.kb_version ?? "?"} · ${h.documents} 文档 / ${h.chunks} 子块 / ${h.vectors} 向量`;
+    el.textContent = `kb v${h.kb_version ?? "?"} · ${h.documents} docs · ${h.chunks} chunks · ${h.vectors} vectors`;
   } else {
     el.className = "pill bad";
-    el.textContent = "资源异常";
+    el.textContent = "Resources unavailable";
   }
-}).catch(() => { $("#health").className = "pill bad"; $("#health").textContent = "接口不可达"; });
+}).catch(() => { $("#health").className = "pill bad"; $("#health").textContent = "API unreachable"; });
 
 fetch("/api/examples").then(r => r.json()).then(d => {
   d.examples.forEach(text => {
@@ -146,15 +146,15 @@ function render(r, prev){
     <div class="q">${escapeHtml(r.question)}</div>
     <div>${badge(r.status)}</div>
     <div class="answer ${r.mode}">${escapeHtml(r.answer)}</div>
-    ${r.citations?.length ? `<div class="cite">出处 ${r.citations.map(c => `<code>${escapeHtml(c)}</code>`).join("")}</div>` : ""}
+    ${r.citations?.length ? `<div class="cite">Sources ${r.citations.map(c => `<code>${escapeHtml(c)}</code>`).join("")}</div>` : ""}
     <div class="meta">
-      <span>路由 <b>${r.route}</b></span>
-      <span>权威级 <b>${r.authority ?? "—"}</b></span>
-      <span>证据 <b>${r.evidence}</b> 条</span>
-      <span>耗时 <b>${t.total_ms ?? 0} ms</b></span>
-      <span>token <b>${r.tokens?.calls ?? 0}</b> 次调用${r.tokens?.cache_hits ? ` / ${r.tokens.cache_hits} 次缓存` : ""}</span>
+      <span>Route <b>${r.route}</b></span>
+      <span>Authority <b>${r.authority ?? "—"}</b></span>
+      <span>Evidence <b>${r.evidence}</b> sources</span>
+      <span>Latency <b>${t.total_ms ?? 0} ms</b></span>
+      <span>Tokens <b>${r.tokens?.calls ?? 0}</b> calls${r.tokens?.cache_hits ? ` / ${r.tokens.cache_hits} cached` : ""}</span>
     </div>
-    <details><summary>原始响应</summary><pre>${escapeHtml(JSON.stringify(r, null, 2))}</pre></details>
+    <details><summary>Raw response</summary><pre>${escapeHtml(JSON.stringify(r, null, 2))}</pre></details>
   `;
   return wrap;
 }
@@ -168,7 +168,7 @@ async function ask(){
   const question = $("#q").value.trim();
   if (!question) return;
   const btn = $("#ask");
-  btn.disabled = true; btn.textContent = "查询中…";
+  btn.disabled = true; btn.textContent = "Thinking…";
   const out = $("#out");
   out.querySelectorAll(".card").forEach(c => c.classList.add("hist"));
 
@@ -182,7 +182,7 @@ async function ask(){
       const t = await res.text();
       const box = document.createElement("div");
       box.className = "card err";
-      box.textContent = `请求失败 (${res.status})：${t.slice(0, 300)}`;
+      box.textContent = `Request failed (${res.status}): ${t.slice(0, 300)}`;
       out.prepend(box);
       return;
     }
@@ -192,16 +192,16 @@ async function ask(){
   } catch (e){
     const box = document.createElement("div");
     box.className = "card err";
-    box.textContent = "网络错误：" + e;
+    box.textContent = "Network error: " + e;
     out.prepend(box);
   } finally {
-    btn.disabled = false; btn.textContent = "提问";
+    btn.disabled = false; btn.textContent = "Ask";
   }
 }
 
 $("#ask").onclick = ask;
 
-// 支持 ?q=问题 打开即问，方便演示和分享链接
+// ?q=<question> asks immediately — handy for demos and share links
 const preset = new URLSearchParams(location.search).get("q");
 if (preset) { $("#q").value = preset; ask(); }
 $("#q").addEventListener("keydown", e => {

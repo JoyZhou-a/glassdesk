@@ -82,7 +82,7 @@ class AnswerGenerator:
                 status=AnswerState.ESCALATE,
                 mode=mode_enum,
                 text=prompts.insufficient_hint(question),
-                notes=["检索无结果"],
+                notes=["no retrieval results"],
             )
 
         # 2. 调模型
@@ -96,7 +96,7 @@ class AnswerGenerator:
                 mode=mode_enum,
                 text="I cannot reach the knowledge service right now. Please check with engineering.",
                 evidence_count=len(chunks),
-                notes=[f"LLM 失败: {exc}"],
+                notes=[f"LLM failure: {exc}"],
             )
 
         # 3. 解析标记
@@ -111,7 +111,7 @@ class AnswerGenerator:
                 evidence_count=len(chunks),
                 cached=response.cached,
                 usage=_usage(response),
-                notes=["模型判定资料不足"],
+                notes=["model judged sources insufficient"],
             )
 
         if status_marker == "unknown":
@@ -124,7 +124,7 @@ class AnswerGenerator:
                 evidence_count=len(chunks),
                 cached=response.cached,
                 usage=_usage(response),
-                notes=["模型未按格式输出，按资料不足处理"],
+                notes=["model did not follow the output format; treated as insufficient"],
             )
 
         # 4. 代码侧格式校验：模型不一定听话
@@ -140,7 +140,7 @@ class AnswerGenerator:
             # 证据里只要有经验来源，就不能让经验性说法冒充规范。
             # 只对"全是经验"加前缀不够——混合证据里那些经验性句子照样会漏出去。
             body = f"In our experience, {body[0].lower() + body[1:] if body else body}"
-            notes.append("证据含 experience 来源，已加经验话术前缀")
+            notes.append("evidence includes experience sources; hedge prefix added")
 
         # 6. 出处由代码拼，且**按权威级别排序**，不是按相关度。
         #    实测踩过：池围栏问题里工单排第一，直接取 top1 会把出处引成工单，
@@ -185,19 +185,19 @@ def _enforce_phone(text: str) -> tuple[str, list[str]]:
     """把文本压成符合电话模式的形态，返回 (新文本, 违规说明)。"""
     violations: list[str] = []
     if any(token in text for token in _FORBIDDEN):
-        violations.append("模型输出了表格/列表，已清理")
+        violations.append("model emitted table/list markup; cleaned")
 
     sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
     if len(sentences) > PHONE_MAX_LINES:
         sentences = sentences[:PHONE_MAX_LINES]
-        violations.append(f"句子超过 {PHONE_MAX_LINES} 句，已截断")
+        violations.append(f"more than {PHONE_MAX_LINES} sentences; truncated")
 
     out: list[str] = []
     for sentence in sentences:
         if len(sentence) > PHONE_MAX_SENTENCE:
             sentence = sentence[: PHONE_MAX_SENTENCE - 1].rstrip() + "…"
-            if "有句子超过 60 字符，已截断" not in violations:
-                violations.append("有句子超过 60 字符，已截断")
+            if "sentence over 60 chars; truncated" not in violations:
+                violations.append("sentence over 60 chars; truncated")
         out.append(sentence)
     return " ".join(out), violations
 

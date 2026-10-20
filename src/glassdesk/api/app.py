@@ -157,7 +157,7 @@ def create_app(ask_fn=None, health_fn=None) -> FastAPI:
     async def index() -> FileResponse:
         page = STATIC_DIR / "index.html"
         if not page.is_file():
-            raise HTTPException(status_code=500, detail="页面文件缺失")
+            raise HTTPException(status_code=500, detail="page file missing")
         return FileResponse(page)
 
     @app.get("/api/examples")
@@ -174,7 +174,7 @@ def create_app(ask_fn=None, health_fn=None) -> FastAPI:
     async def ask(payload: AskRequest) -> AskResponse:
         question = payload.question.strip()
         if not question:
-            raise HTTPException(status_code=422, detail="问题不能为空")
+            raise HTTPException(status_code=422, detail="question must not be empty")
         try:
             return app.state.ask(question, payload.mode, payload.use_cache)
         except Exception as exc:  # noqa: BLE001

@@ -252,12 +252,12 @@ def validate(slots: Slots, *, need: tuple[str, ...] = ("thickness_mm",)) -> Vali
     - 查报价/交期：thickness（+ process 更好，但不强制）
     """
     if slots.is_empty:
-        return Validation("no_slots", reason="没有抽到任何尺寸参数")
+        return Validation("no_slots", reason="no size parameters found")
 
     missing = [f for f in need if getattr(slots, f) is None]
     if missing:
         return Validation("missing", missing=missing,
-                          reason=f"缺少 {', '.join(missing)}，必须追问")
+                          reason=f"missing {', '.join(missing)}; must ask back")
 
     if slots.thickness_mm is not None and slots.process is not None:
         allowed = ALLOWED_THICKNESS.get(slots.process, INT_THICKNESS)

@@ -138,7 +138,7 @@ def test_phone_mode_truncates_extra_sentences(settings):
     result = g.generate("q", [chunk()], OutputMode.PHONE)
     assert len(result.text.split(".")) - 1 <= PHONE_MAX_LINES
     assert result.status is AnswerState.LOW_CONFIDENCE
-    assert any("截断" in n for n in result.notes)
+    assert any("truncated" in n for n in result.notes)
 
 
 def test_phone_mode_truncates_long_sentence(settings):
@@ -146,7 +146,7 @@ def test_phone_mode_truncates_long_sentence(settings):
     g, _ = gen(settings, f"ANSWER: {long_sentence}")
     result = g.generate("q", [chunk()], OutputMode.PHONE)
     assert len(result.text) <= PHONE_MAX_SENTENCE + 20
-    assert any("60 字符" in n for n in result.notes)
+    assert any("60 chars" in n for n in result.notes)
 
 
 def test_markdown_is_stripped(settings):
