@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlassDesk · 玻璃行业知识助手</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#fff; --ink:#14181f; --muted:#5f6875; --line:#e3e7ec;
+    --accent:#1f6feb; --ok:#1a7f37; --warn:#9a6700; --ask:#0a5f9e; --bad:#b42318;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:28px 20px 80px}
+  header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  h1{font-size:20px;margin:0;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:13px}
+  .pill{
+    margin-left:auto;font-size:12px;padding:3px 10px;border-radius:999px;
+    border:1px solid var(--line);background:#fff;color:var(--muted);
+  }
+  .pill.ok{color:var(--ok);border-color:#b7e0c3;background:#f0fbf3}
+  .pill.bad{color:var(--bad);border-color:#f3c2be;background:#fdf3f2}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-top:16px}
+  textarea{
+    width:100%;min-height:74px;resize:vertical;padding:12px 14px;border-radius:10px;
+    border:1px solid var(--line);font:inherit;color:inherit;background:#fff;outline:none;
+  }
+  textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #1f6feb1a}
+  .row{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .seg button{
+    border:0;background:#fff;padding:7px 14px;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;
+  }
+  .seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+  .btn{
+    border:0;border-radius:9px;padding:9px 20px;font:inherit;font-size:14px;font-weight:600;
+    background:var(--accent);color:#fff;cursor:pointer;
+  }
+  .btn:disabled{opacity:.55;cursor:default}
+  .ghost{border:1px solid var(--line);background:#fff;color:var(--muted);font-weight:500;
+         border-radius:999px;padding:5px 12px;font-size:12.5px;cursor:pointer}
+  .ghost:hover{border-color:var(--accent);color:var(--accent)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+
+  .badge{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:6px}
+  .b-answer{color:var(--ok);background:#eaf7ee}
+  .b-low_confidence{color:var(--warn);background:#fdf6e3}
+  .b-need_slot{color:var(--ask);background:#e8f1fb}
+  .b-refuse{color:#a15c00;background:#fdf0e3}
+  .b-escalate,.b-service_error{color:var(--bad);background:#fdeceb}
+  .meta{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12.5px;margin-top:12px}
+  .meta b{color:var(--ink);font-weight:600}
+  .answer{margin:14px 0 0;white-space:pre-wrap;font-size:15.5px}
+  .answer.phone{font-size:17px;line-height:1.7}
+  .cite{margin-top:12px;font-size:12.5px;color:var(--muted)}
+  .cite code{background:#f2f4f7;padding:2px 7px;border-radius:5px;margin-right:6px}
+  details{margin-top:14px;border-top:1px dashed var(--line);padding-top:12px}
+  summary{cursor:pointer;color:var(--muted);font-size:13px}
+  pre{background:#0f1419;color:#d7e0ea;padding:12px 14px;border-radius:9px;overflow:auto;font-size:12.5px}
+  .hist{opacity:.75}
+  .hist .q{font-weight:600;font-size:14px;margin-bottom:4px}
+  .err{color:var(--bad);font-size:13.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>GlassDesk</h1>
+    <span class="sub">玻璃加工知识助手 · 客服电话/邮件双模式</span>
+    <span class="pill" id="health">连接中…</span>
+  </header>
+
+  <div class="card">
+    <textarea id="q" placeholder="Ask something, e.g. What glass do I need for a pool fence?"></textarea>
+    <div class="row">
+      <div class="seg" id="mode">
+        <button data-v="phone" aria-pressed="true">电话模式</button>
+        <button data-v="email" aria-pressed="false">邮件模式</button>
+      </div>
+      <button class="btn" id="ask">提问</button>
+      <span class="sub" id="hint">Ctrl/⌘ + Enter 提交</span>
+    </div>
+    <div class="chips" id="examples"></div>
+  </div>
+
+  <div id="out"></div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let mode = "phone";
+
+function setMode(v){
+  mode = v;
+  document.querySelectorAll("#mode button").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.v === v)));
+}
+
+document.querySelectorAll("#mode button").forEach(b =>
+  b.addEventListener("click", () => setMode(b.dataset.v)));
+
+fetch("/api/health").then(r => r.json()).then(h => {
+  const el = $("#health");
+  if (h.ok){
+    el.className = "pill ok";
+    el.textContent = `kb v${h.kb_version ?? "?"} · ${h.documents} 文档 / ${h.chunks} 子块 / ${h.vectors} 向量`;
+  } else {
+    el.className = "pill bad";
+    el.textContent = "资源异常";
+  }
+}).catch(() => { $("#health").className = "pill bad"; $("#health").textContent = "接口不可达"; });
+
+fetch("/api/examples").then(r => r.json()).then(d => {
+  d.examples.forEach(text => {
+    const b = document.createElement("button");
+    b.className = "ghost";
+    b.textContent = text;
+    b.onclick = () => { $("#q").value = text; ask(); };
+    $("#examples").appendChild(b);
+  });
+});
+
+function badge(status){
+  return `<span class="badge b-${status}">${status}</span>`;
+}
+
+function render(r, prev){
+  const wrap = document.createElement("div");
+  wrap.className = "card" + (prev ? " hist" : "");
+  const t = r.timing || {};
+  wrap.innerHTML = `
+    <div class="q">${escapeHtml(r.question)}</div>
+    <div>${badge(r.status)}</div>
+    <div class="answer ${r.mode}">${escapeHtml(r.answer)}</div>
+    ${r.citations?.length ? `<div class="cite">出处 ${r.citations.map(c => `<code>${escapeHtml(c)}</code>`).join("")}</div>` : ""}
+    <div class="meta">
+      <span>路由 <b>${r.route}</b></span>
+      <span>权威级 <b>${r.authority ?? "—"}</b></span>
+      <span>证据 <b>${r.evidence}</b> 条</span>
+      <span>耗时 <b>${t.total_ms ?? 0} ms</b></span>
+      <span>token <b>${r.tokens?.calls ?? 0}</b> 次调用${r.tokens?.cache_hits ? ` / ${r.tokens.cache_hits} 次缓存` : ""}</span>
+    </div>
+    <details><summary>原始响应</summary><pre>${escapeHtml(JSON.stringify(r, null, 2))}</pre></details>
+  `;
+  return wrap;
+}
+
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, c =>
+    ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+
+async function ask(){
+  const question = $("#q").value.trim();
+  if (!question) return;
+  const btn = $("#ask");
+  btn.disabled = true; btn.textContent = "查询中…";
+  const out = $("#out");
+  out.querySelectorAll(".card").forEach(c => c.classList.add("hist"));
+
+  try {
+    const res = await fetch("/api/ask", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({question, mode, use_cache: true}),
+    });
+    if (!res.ok){
+      const t = await res.text();
+      const box = document.createElement("div");
+      box.className = "card err";
+      box.textContent = `请求失败 (${res.status})：${t.slice(0, 300)}`;
+      out.prepend(box);
+      return;
+    }
+    out.prepend(render(await res.json(), false));
+  } catch (e){
+    const box = document.createElement("div");
+    box.className = "card err";
+    box.textContent = "网络错误：" + e;
+    out.prepend(box);
+  } finally {
+    btn.disabled = false; btn.textContent = "提问";
+  }
+}
+
+$("#ask").onclick = ask;
+$("#q").addEventListener("keydown", e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === "Enter") ask();
+});
+</script>
+</body>
+</html>
