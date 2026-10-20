@@ -1,0 +1,144 @@
+# Australian glass standards - summary sheets
+# 注意：标准号与标题真实存在，但 summary / answer_en 是本项目撰写的合成内容。
+# 只写节标题或节号，不编造具体条款号。见 docs/06_语料生成规格.md §9。
+language: en-AU
+disclaimer: "Synthetic summary for demonstration. Not the standard text."
+
+standards:
+  - code: AS 1288
+    title: Glass in buildings - Selection and installation
+    edition: "2006"
+    sheets:
+      - topic: Safety glazing in doors and side panels
+        section: "Section 5 - Glazing in specific applications"
+        summary: >
+          Glazing in doors, side panels adjacent to doors, and other human impact
+          locations must be safety glazing. Annealed glass is not acceptable in
+          these locations regardless of thickness.
+        answer_en: >
+          Glass in doors and side panels must be safety glass - toughened or
+          laminated. Ordinary annealed glass is not permitted there at any
+          thickness. Final selection is subject to site measurement and NCC/DA
+          requirements.
+        applies_to: [door, sidelight, shopfront]
+
+      - topic: Glazing at low levels
+        section: "Section 5 - Glazing in specific applications"
+        summary: >
+          Where glazing extends close to floor level in areas subject to human
+          impact, safety glazing is required. The extent of the zone depends on
+          the application and the likelihood of impact.
+        answer_en: >
+          If the glass goes low enough to be bumped into, it needs to be safety
+          glass. The exact cutoff depends on where it is installed - we confirm
+          against AS 1288 before quoting. Subject to site measurement and NCC/DA
+          requirements.
+        applies_to: [window, door, partition, balustrade]
+
+      - topic: Overhead glazing
+        section: "Section 6 - Additional requirements"
+        summary: >
+          Glazing installed overhead - skylights, canopies, roof glazing - must
+          retain the fragments if it breaks. Laminated glass or a laminated
+          assembly is normally required; toughened glass alone is not sufficient
+          for overhead use.
+        answer_en: >
+          Anything overhead must stay in place if it breaks, so it has to be
+          laminated. Toughened glass on its own is not accepted overhead. Subject
+          to site measurement and NCC/DA requirements.
+        applies_to: [ceiling, skylight, canopy]
+
+  - code: AS/NZS 2208
+    title: Safety glazing materials in buildings
+    edition: "current edition"
+    sheets:
+      - topic: Marking of safety glazing
+        section: "Section 2 - Marking"
+        summary: >
+          Safety glazing materials must be permanently marked by the
+          manufacturer. The mark identifies the manufacturer and the standard to
+          which the material conforms, and must remain legible after installation.
+        answer_en: >
+          Safety glass must carry a permanent manufacturer's mark identifying the
+          standard it meets. If the mark is missing, it is not a compliant safety
+          glazing product - we can supply certification instead. Subject to site
+          measurement and NCC/DA requirements.
+        applies_to: [all]
+
+      - topic: Classification of safety glazing
+        section: "Section 1 - Scope and classification"
+        summary: >
+          Safety glazing is classified by impact performance. Products are
+          assigned a classification based on the test they pass, and the
+          classification determines where the product may be used.
+        answer_en: >
+          Safety glass is graded by impact test, and the grade decides where it
+          can be used. We supply the grade that matches the application - ask us
+          for the classification before you order. Subject to site measurement and
+          NCC/DA requirements.
+        applies_to: [all]
+
+  - code: AS 4666
+    title: Insulating glass units
+    edition: "current edition"
+    sheets:
+      - topic: Seal durability and unit integrity
+        section: "Section 3 - Requirements"
+        summary: >
+          Insulating glass units must maintain their seal over the service life
+          of the unit. The unit is assessed for seal integrity, and failure of the
+          seal is a defect rather than normal ageing.
+        answer_en: >
+          A sealed unit has to hold its seal for its service life. If the seal
+          fails and moisture gets in, that is a manufacturing defect, not normal
+          wear - it is covered by the unit warranty. Subject to site measurement
+          and NCC/DA requirements.
+        applies_to: [igu]
+
+      - topic: Condensation inside the cavity
+        section: "Section 4 - Performance"
+        summary: >
+          Condensation forming inside the cavity indicates a seal failure.
+          Condensation on the room-side or outside surface is a separate
+          phenomenon related to humidity and temperature, and is not a unit
+          defect.
+        answer_en: >
+          Moisture inside the gap means the seal has failed - that is a warranty
+          matter. Water on the outside face of the glass is just condensation and
+          is not a defect. Subject to site measurement and NCC/DA requirements.
+        applies_to: [igu]
+
+  - code: AS 1926.1
+    title: Swimming pool safety - Safety barriers for swimming pools
+    edition: "current edition"
+    sheets:
+      - topic: Glazing used as a pool barrier
+        section: "Section 2 - Barrier requirements"
+        summary: >
+          Where glass forms part of a pool safety barrier it must be safety
+          glazing, and the barrier must remain effective if the glass is broken.
+          The assembly, fixings and glass type are assessed together.
+        answer_en: >
+          Glass used as a pool fence must be safety glass, and the whole barrier -
+          glass, fixings and frame - has to stay effective if it breaks. We
+          normally supply laminated toughened assemblies for this. Subject to site
+          measurement and NCC/DA requirements.
+        applies_to: [pool_fence]
+
+  - code: AS 3959
+    title: Construction of buildings in bushfire-prone areas
+    edition: "2018"
+    sheets:
+      - topic: Glazing in bushfire prone areas
+        section: "Section 6 - Windows and glazing"
+        summary: >
+          In designated bushfire prone areas, external glazing must resist the
+          radiant heat and ember attack associated with the assessed Bushfire
+          Attack Level. The required glass type and any external screening depend
+          on the BAL rating of the site.
+        answer_en: >
+          In a bushfire prone area the glass has to match the BAL rating for the
+          site. Tell us the BAL and we will nominate the assembly - usually
+          toughened or laminated with screened frames. Subject to site measurement
+          and NCC/DA requirements.
+        applies_to: [window, door, skylight]

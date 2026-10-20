@@ -1,0 +1,11 @@
+process,thickness_max_mm,qty_max,business_days,rush_available,rush_surcharge_pct,note
+annealed,12,999,5,true,40,imported stock add 8-10 weeks
+toughened,8,10,10,true,35,
+toughened,8,999,15,true,25,
+toughened,12,10,12,true,35,
+toughened,12,999,18,true,25,
+toughened,19,999,20,false,0,thick glass scheduled weekly
+laminated,12.76,10,12,true,30,
+laminated,12.76,999,17,true,20,
+igu,12,10,15,true,25,
+igu,12,999,20,true,15,

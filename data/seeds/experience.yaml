@@ -1,0 +1,549 @@
+# 客服战地手册：从生产经验里总结出来的常见问题
+# 全部为 experience 级（非权威），回答时必须以 "Usually / In our experience / Typically" 开头。
+# 规则：不出现价格数字、不出现交期天数（那两者只来自 pricing.csv / leadtime.csv）。
+language: en-AU
+authority: experience
+
+entries:
+  # ---------------- spec：尺寸与能力（8 条） ----------------
+  - entry_id: EXP-001
+    topic: single panel larger than furnace
+    question: Customer wants a single panel 3000 x 3000. Can we do it?
+    answer_en: >
+      Usually we cannot. Our furnace caps a single panel well below that in both
+      width and height, and there is also an area limit that catches long thin
+      panels. Offer to split it into two panels with a mullion, or drop the
+      height.
+    keywords: [oversize, panel size, furnace limit, split panel]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-11
+    source_ticket: T-2025-004
+    tags: [spec]
+
+  - entry_id: EXP-002
+    topic: within width and height but over area
+    question: The width and height are both under the limit but we still said no. Why?
+    answer_en: >
+      In our experience this is the area limit, not the width or height. A long
+      narrow panel can pass both dimensions and still exceed the maximum area the
+      furnace will accept.
+    keywords: [area limit, oversize, aspect ratio]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-11
+    source_ticket: T-2025-009
+    tags: [spec]
+
+  - entry_id: EXP-003
+    topic: thickness versus span
+    question: Will 6mm be strong enough for this opening?
+    answer_en: >
+      Typically we do not answer that from thickness alone. Span, wind pressure
+      and fixing method all matter, and the selection is made against AS 1288.
+      Ask for the opening size and the site location before nominating a
+      thickness.
+    keywords: [thickness, span, wind load, AS 1288]
+    confirmed_by: ZL
+    confirmed_at: 2026-01-20
+    source_ticket: T-2025-017
+    tags: [spec]
+
+  - entry_id: EXP-004
+    topic: tolerance questions
+    question: Customer expects the panel to be exactly to the millimetre.
+    answer_en: >
+      Usually we should set this expectation early. Cut and toughened panels carry
+      a stated tolerance that widens with size, so exact-to-the-millimetre is not
+      achievable. Quote the tolerance figure before the order is placed.
+    keywords: [tolerance, dimension, expectation]
+    confirmed_by: ZL
+    confirmed_at: 2026-01-20
+    source_ticket: T-2025-021
+    tags: [spec]
+
+  - entry_id: EXP-005
+    topic: curved glass minimum radius
+    question: Can you bend this to a very tight radius?
+    answer_en: >
+      Typically no. Bent glass has a minimum radius that gets larger as the glass
+      gets thicker, so a tight radius usually forces a thinner glass. Get the
+      radius and the thickness together before promising anything.
+    keywords: [bent, curved, radius, minimum]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-03
+    source_ticket: T-2025-026
+    tags: [spec]
+
+  - entry_id: EXP-006
+    topic: splitting a panel
+    question: Customer insists on one piece. Can we join two panels invisibly?
+    answer_en: >
+      In our experience there is no invisible join. Two panels always need a
+      mullion or a structural silicone joint, and the joint is visible. Say that
+      plainly rather than implying we can hide it.
+    keywords: [join, mullion, split, seamless]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-03
+    source_ticket: T-2025-031
+    tags: [spec]
+
+  - entry_id: EXP-007
+    topic: customer supplied measurements
+    question: The customer measured it themselves. Can we cut to their numbers?
+    answer_en: >
+      Usually we should not. Customer measurements are a common cause of remakes
+      because frames are rarely square. Ask for a site measure or make the order
+      conditional on their numbers being verified.
+    keywords: [site measure, customer measurement, remake]
+    confirmed_by: TH
+    confirmed_at: 2026-01-14
+    source_ticket: T-2025-036
+    tags: [spec]
+
+  - entry_id: EXP-008
+    topic: very small panels
+    question: Customer wants a tiny panel, 200 x 200.
+    answer_en: >
+      Typically that is below our minimum size and the furnace cannot handle it.
+      There is also a minimum charge that makes small panels uneconomic, so it is
+      worth telling the customer the minimum charge at the same time.
+    keywords: [minimum size, small panel, minimum charge]
+    confirmed_by: TH
+    confirmed_at: 2026-01-14
+    source_ticket: T-2025-040
+    tags: [spec]
+
+  # ---------------- config：配置与编码（8 条） ----------------
+  - entry_id: EXP-009
+    topic: double versus triple glazing
+    question: Is triple glazing worth it over double?
+    answer_en: >
+      Usually the gain is smaller than customers expect, and most of it comes from
+      the frame rather than the extra pane. For a normal Canberra house, a good
+      double unit with a warm-edge spacer and argon gets most of the benefit.
+    keywords: [triple glazing, double glazing, igu, upgrade]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-18
+    source_ticket: T-2025-045
+    tags: [config]
+
+  - entry_id: EXP-010
+    topic: soft coat versus hard coat low-e
+    question: What is the difference between the two Low-E options?
+    answer_en: >
+      In our experience the practical difference is handling. Soft coat performs
+      better but the coating is fragile and has a designated face; hard coat is
+      more forgiving and can be handled normally. If the unit is likely to be
+      reworked on site, hard coat is the safer conversation.
+    keywords: [low-e, soft coat, hard coat, coating, handling]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-18
+    source_ticket: T-2025-049
+    tags: [config]
+
+  - entry_id: EXP-011
+    topic: argon filling
+    question: Does argon actually do anything?
+    answer_en: >
+      Typically it improves the insulation of the unit, but the effect is modest
+      and it only holds if the seal holds. Do not sell it as a big number - sell
+      it as a small improvement that comes free with a properly sealed unit.
+    keywords: [argon, gas fill, insulation, u-value]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-18
+    source_ticket: T-2025-052
+    tags: [config]
+
+  - entry_id: EXP-012
+    topic: warm edge spacer
+    question: Why is the spacer at the edge different on some units?
+    answer_en: >
+      Usually that is a warm-edge spacer, and it reduces heat loss at the edge of
+      the unit where condensation tends to form first. It is worth having in cold
+      climates, and it is a cheap upgrade compared with adding a third pane.
+    keywords: [warm edge, spacer, condensation, thermal bridge]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-18
+    source_ticket: T-2025-055
+    tags: [config]
+
+  - entry_id: EXP-013
+    topic: cavity width choice
+    question: Should we use a wider cavity?
+    answer_en: >
+      Typically a wider cavity helps up to a point and then stops helping, and it
+      makes the unit thicker and heavier. Do not go wider just because it sounds
+      better - match the cavity to the frame depth the builder actually has.
+    keywords: [cavity, gap, igu thickness, frame depth]
+    confirmed_by: TH
+    confirmed_at: 2026-02-05
+    source_ticket: T-2025-060
+    tags: [config]
+
+  - entry_id: EXP-014
+    topic: special colour codes
+    question: Can we match the customer's colour code?
+    answer_en: >
+      In our experience only the codes on our current list are available, and the
+      list changes. Ask for the code in writing, check it against the current
+      range, and if it is not there offer the closest alternative rather than
+      promising a match.
+    keywords: [colour code, tint, matching, special order]
+    confirmed_by: TH
+    confirmed_at: 2026-02-05
+    source_ticket: T-2025-064
+    tags: [config]
+
+  - entry_id: EXP-015
+    topic: pvb versus sgp interlayer
+    question: Which interlayer should we use for laminated glass?
+    answer_en: >
+      Usually PVB is enough for standard safety glazing. SGP is used where the
+      glass has to hold together longer or carry load after breakage, such as
+      overhead or balustrade work. If the application is structural, ask
+      engineering rather than choosing by price.
+    keywords: [laminated, pvb, sgp, interlayer, structural]
+    confirmed_by: TH
+    confirmed_at: 2026-01-28
+    source_ticket: T-2025-068
+    tags: [config]
+
+  - entry_id: EXP-016
+    topic: privacy without losing light
+    question: Customer wants privacy but still wants daylight.
+    answer_en: >
+      Typically the options are acid-etched, frosted film or a printed pattern,
+      and each has a different lead time. Ask whether privacy is needed day and
+      night - ordinary frosting does not give night-time privacy when the inside
+      is lit.
+    keywords: [privacy, frosted, acid etched, obscure, daylight]
+    confirmed_by: TH
+    confirmed_at: 2026-01-28
+    source_ticket: T-2025-072
+    tags: [config]
+
+  # ---------------- selection：场景选型（8 条） ----------------
+  - entry_id: EXP-017
+    topic: pool fence glass
+    question: Customer wants glass around a pool. What do we supply?
+    answer_en: >
+      Usually a laminated toughened assembly, because the barrier has to stay
+      effective if the glass breaks. Never quote ordinary toughened glass for a
+      pool barrier - it fails the barrier requirement even though it is safety
+      glass.
+    keywords: [pool fence, barrier, laminated, safety glass, AS 1926.1]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-25
+    source_ticket: T-2025-076
+    tags: [selection]
+
+  - entry_id: EXP-018
+    topic: glass beside a door
+    question: Does the narrow panel next to the front door need special glass?
+    answer_en: >
+      Typically yes. Panels beside a door sit in a human impact zone, so they
+      need safety glass the same as the door itself. This is the single most
+      common compliance question we get, and the answer is not negotiable on
+      price.
+    keywords: [sidelight, door, safety glass, human impact]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-25
+    source_ticket: T-2025-080
+    tags: [selection]
+
+  - entry_id: EXP-019
+    topic: skylight and roof glazing
+    question: Customer wants glass over a walkway.
+    answer_en: >
+      In our experience anything overhead must be laminated so it stays in place
+      if it breaks. Toughened glass alone drops out as a shower of fragments,
+      which is exactly what we are trying to avoid over a person.
+    keywords: [overhead, skylight, canopy, laminated, fall out]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-25
+    source_ticket: T-2025-084
+    tags: [selection]
+
+  - entry_id: EXP-020
+    topic: shower screen
+    question: What glass for a shower screen?
+    answer_en: >
+      Typically toughened glass, with a coating or film if the customer wants it
+      to stay together when it breaks. Do not use annealed glass in a shower
+      under any circumstances.
+    keywords: [shower, toughened, screen, bathroom]
+    confirmed_by: TH
+    confirmed_at: 2026-01-22
+    source_ticket: T-2025-088
+    tags: [selection]
+
+  - entry_id: EXP-021
+    topic: balustrade glazing
+    question: Glass for a balcony balustrade - what do we need?
+    answer_en: >
+      Usually laminated, and often laminated toughened, because the balustrade has
+      to keep people from falling even after a break. Ask whether the balustrade
+      is structural or just a barrier, because that changes the assembly.
+    keywords: [balustrade, balcony, fall protection, laminated]
+    confirmed_by: TH
+    confirmed_at: 2026-01-22
+    source_ticket: T-2025-092
+    tags: [selection]
+
+  - entry_id: EXP-021b
+    topic: shopfront wind pressure
+    question: Large shopfront glazing - how do we pick the thickness?
+    answer_en: >
+      In our experience this is a wind load question, not a taste question. Get
+      the site wind classification and the panel size, then select from AS 1288.
+      Never pick a shopfront thickness by comparing it to a house window.
+    keywords: [shopfront, wind load, thickness, AS 1288, commercial]
+    confirmed_by: TH
+    confirmed_at: 2026-01-22
+    source_ticket: T-2025-096
+    tags: [selection]
+
+  - entry_id: EXP-022
+    topic: acoustic glazing near a main road
+    question: Customer is on a busy road and wants it quieter.
+    answer_en: >
+      Typically the interlayer matters more than the thickness. A laminated unit
+      with a thick acoustic interlayer usually outperforms simply going thicker,
+      and the frame and any air gap matter just as much.
+    keywords: [noise, acoustic, laminated, interlayer, traffic]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-12
+    source_ticket: T-2025-100
+    tags: [selection]
+
+  - entry_id: EXP-023
+    topic: west facing heat gain
+    question: West facing room gets very hot in summer. What glass?
+    answer_en: >
+      Usually a low-e or solar control coating on the west face, combined with a
+      sealed unit. Be careful with orientation - the coating has a designated
+      face and putting it on the wrong side reverses the effect.
+    keywords: [heat gain, west facing, low-e, solar control, orientation]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-12
+    source_ticket: T-2025-104
+    tags: [selection]
+
+  # ---------------- after_sales：售后（8 条） ----------------
+  - entry_id: EXP-024
+    topic: cracks after installation
+    question: Customer reports cracks two weeks after installation. Is it a defect?
+    answer_en: >
+      Usually it is not a manufacturing defect. Cracks starting at an edge or
+      around a fixing point are normally caused during installation. Ask for
+      photos of the full panel and of where the crack starts before raising a
+      claim - leave the glass in place until we have seen it.
+    keywords: [crack, edge damage, installation damage, claim, photos]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-11
+    source_ticket: T-2025-014
+    tags: [after_sales]
+
+  - entry_id: EXP-025
+    topic: spontaneous breakage
+    question: The glass broke by itself with nobody near it.
+    answer_en: >
+      In our experience this can be spontaneous breakage from a nickel sulphide
+      inclusion, and the pattern gives it away - it starts from a point well away
+      from any edge and spreads as a fine web. Preserve the panel and photograph
+      the origin before cleaning up, because the claim depends on it.
+    keywords: [spontaneous breakage, nickel sulphide, nis, self break, origin]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-11
+    source_ticket: T-2025-018
+    tags: [after_sales]
+
+  - entry_id: EXP-026
+    topic: chipped edge
+    question: There is a small chip on the edge. Is that acceptable?
+    answer_en: >
+      Typically small edge chips within tolerance are acceptable and do not
+      affect strength, but a chip that has opened up or is on a load-bearing edge
+      is a different matter. Ask for a close-up photo with a reference object for
+      scale before judging.
+    keywords: [chip, chipped edge, damage, tolerance]
+    confirmed_by: TH
+    confirmed_at: 2026-01-30
+    source_ticket: T-2025-022
+    tags: [after_sales]
+
+  - entry_id: EXP-027
+    topic: surface scratches
+    question: Customer says the glass is scratched.
+    answer_en: >
+      Usually we need to know whether the scratch is on the coated face and
+      whether it catches a fingernail. Fine surface marks often come from
+      cleaning, and coarser ones from handling. Ask which face and when it
+      appeared - overnight or gradually.
+    keywords: [scratch, coating, cleaning, surface damage]
+    confirmed_by: TH
+    confirmed_at: 2026-01-30
+    source_ticket: T-2025-027
+    tags: [after_sales]
+
+  - entry_id: EXP-028
+    topic: roller wave and distortion
+    question: Customer sees wavy reflections in the glass.
+    answer_en: >
+      In our experience some optical distortion is inherent in the toughening
+      process and is visible in reflection at low angles, especially on darker
+      glass. It is not usually a defect, but be ready to show the customer the
+      acceptance criteria rather than telling them they are imagining it.
+    keywords: [roller wave, distortion, reflection, optical, acceptance]
+    confirmed_by: TH
+    confirmed_at: 2026-01-30
+    source_ticket: T-2025-033
+    tags: [after_sales]
+
+  - entry_id: EXP-029
+    topic: igu fogging inside
+    question: There is mist inside the double glazing.
+    answer_en: >
+      Typically that is a seal failure and is a warranty matter, because moisture
+      inside the cavity means the unit has lost its seal. Check first that the
+      moisture is really inside the gap and not on the room-side face.
+    keywords: [fogging, mist, seal failure, igu, warranty, condensation]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-20
+    source_ticket: T-2025-041
+    tags: [after_sales]
+
+  - entry_id: EXP-030
+    topic: coating discolouration
+    question: There is a rainbow patch on the coated glass.
+    answer_en: >
+      Usually a rainbow tint can be normal interference colour on a coated
+      surface, but a patch that has gone milky or has a visible boundary is more
+      likely coating damage. Ask which cleaner was used - harsh cleaners are the
+      most common cause.
+    keywords: [rainbow, coating, discolouration, cleaner, soft coat]
+    confirmed_by: TH
+    confirmed_at: 2026-02-06
+    source_ticket: T-2025-047
+    tags: [after_sales]
+
+  - entry_id: EXP-030b
+    topic: wrong size supplied
+    question: The panel is the wrong size. Who pays?
+    answer_en: >
+      In our experience it depends on who supplied the measurement, so establish
+      that first and in writing. If we were given the size and cut to it, the
+      remake is chargeable; if we misread the order, it is on us. Never concede
+      liability on the phone before checking the order sheet.
+    keywords: [wrong size, remake, liability, measurement, order sheet]
+    confirmed_by: ZL
+    confirmed_at: 2026-02-06
+    source_ticket: T-2025-053
+    tags: [after_sales]
+
+  # ---------------- logistics：交期与物流（8 条） ----------------
+  - entry_id: EXP-031
+    topic: standard lead time expectation
+    question: Customer wants to know when the glass will arrive.
+    answer_en: >
+      Usually we should quote from the current lead-time table rather than from
+      memory, because the figure depends on process, thickness and quantity. Give
+      the figure as a working lead time from order confirmation, not from the
+      phone call.
+    keywords: [lead time, delivery, when, schedule]
+    confirmed_by: TH
+    confirmed_at: 2026-02-14
+    source_ticket: T-2025-058
+    tags: [logistics]
+
+  - entry_id: EXP-032
+    topic: rush orders
+    question: Can we get this faster if the customer pays more?
+    answer_en: >
+      Typically rush is possible on standard processes but not on everything, and
+      very thick glass runs on a fixed weekly schedule regardless of what the
+      customer pays. Confirm the process can be rushed before quoting a
+      surcharge.
+    keywords: [rush, urgent, surcharge, expedite, thick glass]
+    confirmed_by: TH
+    confirmed_at: 2026-02-14
+    source_ticket: T-2025-062
+    tags: [logistics]
+
+  - entry_id: EXP-033
+    topic: large panel handling on site
+    question: Who unloads the big panels?
+    answer_en: >
+      In our experience this needs to be agreed before delivery, not on the day.
+      Large panels need a suitable frame or an A-frame and enough people, and the
+      driver is not insured to unload by hand. Ask what equipment the site has.
+    keywords: [unload, delivery, a-frame, large panel, site access]
+    confirmed_by: TH
+    confirmed_at: 2026-02-14
+    source_ticket: T-2025-066
+    tags: [logistics]
+
+  - entry_id: EXP-034
+    topic: transit damage
+    question: The glass arrived broken. Who is responsible?
+    answer_en: >
+      Usually the carrier, and the claim depends on evidence taken at the point
+      of delivery. Tell the customer to photograph the packaging and the panel
+      before signing, and to note any damage on the delivery docket. Without that
+      note the claim is very hard to run.
+    keywords: [transit damage, delivery docket, carrier, claim, packaging]
+    confirmed_by: TH
+    confirmed_at: 2026-02-14
+    source_ticket: T-2025-070
+    tags: [logistics]
+
+  - entry_id: EXP-035
+    topic: partial deliveries
+    question: Can we get part of the order now and the rest later?
+    answer_en: >
+      Typically yes for standard processes, but it adds handling and it can reset
+      the remaining lead time. Confirm with production before promising a split,
+      and put it in writing which items ship first.
+    keywords: [partial delivery, split order, staging, release]
+    confirmed_by: TH
+    confirmed_at: 2026-02-21
+    source_ticket: T-2025-074
+    tags: [logistics]
+
+  - entry_id: EXP-036
+    topic: order progress
+    question: Customer keeps calling to ask where their order is.
+    answer_en: >
+      In our experience the best fix is to give a date range at the time of order
+      and a single point of contact, so they do not have to chase. If they are
+      chasing, check the order sheet before answering - never guess a status.
+    keywords: [order status, progress, tracking, chase]
+    confirmed_by: TH
+    confirmed_at: 2026-02-21
+    source_ticket: T-2025-078
+    tags: [logistics]
+
+  - entry_id: EXP-037
+    topic: delivery outside the metro area
+    question: Customer is well outside town. Do we deliver there?
+    answer_en: >
+      Usually yes but it is a separate freight arrangement and the timing is not
+      the same as metro. Confirm the suburb and access first - a long gravel
+      driveway is a different job from a street address.
+    keywords: [delivery, regional, freight, access, suburb]
+    confirmed_by: TH
+    confirmed_at: 2026-02-21
+    source_ticket: T-2025-082
+    tags: [logistics]
+
+  - entry_id: EXP-038
+    topic: shutdown periods
+    question: Why did the lead time jump?
+    answer_en: >
+      Typically this is a shutdown period at the supplier or the plant, and it is
+      known in advance. If a project is time-critical, ask about shutdown dates at
+      the quoting stage rather than after the order is placed.
+    keywords: [shutdown, holiday, chinese new year, delay, supplier]
+    confirmed_by: TH
+    confirmed_at: 2026-02-21
+    source_ticket: T-2025-086
+    tags: [logistics]

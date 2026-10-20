@@ -1,0 +1,175 @@
+# 设备手册（清单式）：中资风格，短句 + 参数表 + 警告框
+# 用于验证：按表格行切分、警告框识别、Heading 层级还原
+doc:
+  doc_id: manual-tempering
+  title: Tempering Furnace TF-2448 Operation Manual
+  revision: C
+  language: en-AU
+  style: checklist
+  equipment:
+    model: TF-2448
+    nominal_max_panel: "2440 mm x 4800 mm"
+    glass_thickness_range: "4 - 19 mm"
+    installed: "2024-11"
+
+sections:
+  - number: "1"
+    title: Safety
+    paragraphs:
+      - "Read this section before operating the furnace. Only trained and authorised operators may run a tempering cycle."
+      - "The furnace contains moving rollers, a hot zone at up to 700 degrees C, and a pressurised quench section. Loose clothing, watches and rings must not be worn."
+      - "Two persons are required for panels larger than 3000 mm in any direction. One person operates the control panel, one person guides the panel."
+    warnings:
+      - level: DANGER
+        text: "Never open the furnace door while the quench section is pressurised. Release the quench pressure and confirm zero on the gauge before opening."
+      - level: WARNING
+        text: "Do not touch the roller bed within 30 minutes of a cycle ending. The rollers remain above 200 degrees C and cause instant burns."
+      - level: CAUTION
+        text: "Hot glass is not visibly hot. Always assume a panel leaving the furnace is at full temperature until it has passed through the cooling section."
+      - level: NOTE
+        text: "Emergency stop buttons are located at the load end, the unload end, and the control cabinet."
+    tables: []
+
+  - number: "2"
+    title: Overview and Specifications
+    paragraphs:
+      - "The TF-2448 is a forced-convection tempering furnace with a roller hearth, a heating chamber divided into three zones, and an oscillating quench section."
+      - "The furnace accepts flat glass from 4 mm to 19 mm. Bent glass is not processed in this furnace; it is transferred to the bending line."
+      - "Nominal maximum panel size is 2440 mm by 4800 mm. Panels above 12 mm thickness are restricted to a reduced area, see the capability matrix."
+    warnings:
+      - level: NOTE
+        text: "The nominal maximum size is not the guaranteed maximum size for every thickness. Always confirm against the current capability matrix before quoting a customer."
+    tables:
+      - caption: "Table 2-1 Furnace specifications"
+        columns: ["Parameter", "Value", "Unit"]
+        rows:
+          - ["Nominal max panel width", "2440", "mm"]
+          - ["Nominal max panel height", "4800", "mm"]
+          - ["Glass thickness range", "4 - 19", "mm"]
+          - ["Heating zones", "3", "-"]
+          - ["Max heating temperature", "700", "deg C"]
+          - ["Quench pressure range", "8 - 32", "kPa"]
+          - ["Roller diameter", "60", "mm"]
+          - ["Roller pitch", "300", "mm"]
+          - ["Installed power", "630", "kVA"]
+
+  - number: "3"
+    title: Pre-start Checks
+    paragraphs:
+      - "Complete every check before the first cycle of the shift. Record the result on the shift sheet."
+      - "If any check fails, do not start the furnace. Raise a maintenance request and inform the shift supervisor."
+    tables:
+      - caption: "Table 3-1 Pre-start checklist"
+        columns: ["Step", "Check", "Acceptance"]
+        rows:
+          - ["1", "Compressed air supply", "6 - 8 bar, no water in trap"]
+          - ["2", "Quench blower", "Starts, no abnormal noise"]
+          - ["3", "Roller drive", "Runs at low speed, no slip"]
+          - ["4", "Heating zone temperatures", "Within 15 deg C of setpoint"]
+          - ["5", "Door seal", "No visible gap, no air leak"]
+          - ["6", "Emergency stops", "All three buttons latch and reset"]
+          - ["7", "Glass detector", "Triggers when a panel is placed"]
+          - ["8", "Cooling water flow", "Flow switch closed"]
+
+  - number: "4"
+    title: Heating Parameters
+    paragraphs:
+      - "Heating time is set as seconds per millimetre of thickness. Multiply the figure in the table by the glass thickness to get the total heating time."
+      - "The values in this table are the starting point for clear float glass. Coated glass requires a longer heating time; add 8 percent for soft coat."
+      - "Do not reduce the heating time to increase output. Under-heated glass breaks in the quench section and the fragments are hot."
+    warnings:
+      - level: WARNING
+        text: "Heating time must not be shortened to catch up on a late order. Under-heated glass can explode in the quench section."
+    tables:
+      - caption: "Table 4-1 Recommended heating time by thickness"
+        columns: ["Thickness (mm)", "Heating time (s/mm)", "Quench pressure (kPa)"]
+        rows:
+          - ["4", "38", "12"]
+          - ["5", "40", "15"]
+          - ["6", "42", "18"]
+          - ["8", "46", "22"]
+          - ["10", "50", "26"]
+          - ["12", "55", "30"]
+          - ["15", "60", "32"]
+          - ["19", "68", "32"]
+
+      - caption: "Table 4-2 Heating zone setpoints"
+        columns: ["Zone", "Setpoint (deg C)", "Tolerance (deg C)"]
+        rows:
+          - ["Zone 1 (entry)", "620", "10"]
+          - ["Zone 2 (centre)", "680", "10"]
+          - ["Zone 3 (exit)", "700", "8"]
+
+  - number: "5"
+    title: Quench System
+    paragraphs:
+      - "The quench section supplies high pressure air through upper and lower nozzle boxes. Pressure must be balanced between the two boxes; an imbalance causes the panel to bow."
+      - "Check the nozzle boxes for blockage at the start of every shift. A blocked nozzle produces a visible patch of stress difference in polarised light."
+      - "Quench pressure is set from Table 4-1. Lower pressure produces lower surface compression and is only acceptable for thin glass."
+    warnings:
+      - level: DANGER
+        text: "Isolate and bleed the compressed air line before opening a nozzle box. Stored pressure is sufficient to cause serious injury."
+    tables:
+      - caption: "Table 5-1 Quench pressure by thickness"
+        columns: ["Thickness (mm)", "Upper box (kPa)", "Lower box (kPa)"]
+        rows:
+          - ["4", "12", "12"]
+          - ["5", "15", "15"]
+          - ["6", "18", "18"]
+          - ["8", "22", "22"]
+          - ["10", "26", "26"]
+          - ["12", "30", "30"]
+          - ["15", "32", "32"]
+          - ["19", "32", "32"]
+
+  - number: "6"
+    title: Loading and Unloading
+    paragraphs:
+      - "Load panels with the roller direction, not across it. Loading across the rollers causes chipping at the trailing edge."
+      - "Space panels by at least 300 mm, which is one roller pitch. Panels closer than this interfere with each other in the quench section."
+      - "Support large panels on an A-frame after unloading. Do not stack hot panels flat; the lower panel retains heat and can crack."
+      - "Record the panel count and the cycle number on the shift sheet after every batch."
+
+  - number: "7"
+    title: Fault Diagnosis
+    paragraphs:
+      - "Use this table before raising a maintenance request. Most faults have a first-line action the operator can take."
+      - "If the fault repeats three times in one shift, stop production and raise a maintenance request with the fault code."
+    tables:
+      - caption: "Table 7-1 Common faults"
+        columns: ["Symptom", "Probable cause", "First-line action"]
+        rows:
+          - ["Glass breaks in quench", "Heating time too short", "Increase heating time per Table 4-1"]
+          - ["Panel bows after quench", "Unequal upper and lower pressure", "Balance nozzle box pressure, check gauge"]
+          - ["Chipping at trailing edge", "Panel loaded across rollers", "Reload with the roller direction"]
+          - ["White haze on surface", "Roller contamination", "Clean rollers, raise maintenance request"]
+          - ["Uneven break pattern", "Blocked nozzle", "Clean nozzle box, check for scale"]
+          - ["Furnace will not start", "Door seal interlock open", "Check seal, close door fully"]
+          - ["Temperature not reaching setpoint", "Heating element failure", "Check element current, raise request"]
+
+  - number: "8"
+    title: Maintenance Schedule
+    paragraphs:
+      - "Maintenance is the responsibility of the maintenance team. Operators are responsible for cleaning and inspection items only."
+    tables:
+      - caption: "Table 8-1 Maintenance intervals"
+        columns: ["Interval", "Task", "Owner"]
+        rows:
+          - ["Every shift", "Inspect rollers for glass chips", "Operator"]
+          - ["Every shift", "Drain water trap on air supply", "Operator"]
+          - ["Weekly", "Clean quench nozzle boxes", "Maintenance"]
+          - ["Weekly", "Check door seal clearance", "Maintenance"]
+          - ["Monthly", "Measure roller wear", "Maintenance"]
+          - ["Monthly", "Calibrate zone thermocouples", "Maintenance"]
+          - ["Every 6 months", "Replace door seal", "Maintenance"]
+          - ["Every 12 months", "Full furnace inspection", "Maintenance"]
+
+  - number: "9"
+    title: Shutdown
+    paragraphs:
+      - "Run the furnace empty for one full cycle before a planned shutdown, so that no glass is left in the heating chamber."
+      - "Allow the furnace to cool to below 100 degrees C before opening the door for cleaning. Opening a hot furnace warps the door frame."
+      - "Isolate the compressed air supply and the main power at the end of a shutdown."
+    warnings:
+      - level: CAUTION
+        text: "Do not leave glass in the heating chamber during a shutdown. Cold glass in a cooling furnace develops stress and will break on restart."

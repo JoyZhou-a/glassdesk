@@ -9,7 +9,7 @@ venv/
 __pycache__/
 *.py[cod]
 *.egg-info/
-build/
+/build/
 dist/
 .uv/
 
@@ -28,6 +28,8 @@ data/raw/*
 !data/raw/.gitkeep
 data/processed/*
 !data/processed/.gitkeep
+# 语料构建的中间产物（docx 母版），可由 seeds 随时重建
+data/build/
 *.log
 
 # ---- 模型权重（外置在 E:\models，永不入库）----

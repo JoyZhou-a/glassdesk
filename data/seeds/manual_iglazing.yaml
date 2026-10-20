@@ -1,0 +1,155 @@
+# 设备手册（条款式）：德资风格，长句 + 深层级编号
+# 用于验证：按编号层级切分、chunk 携带完整层级路径（如 4.2.2.1）
+doc:
+  doc_id: manual-iglazing
+  title: Insulating Glass Line IG-2000 Operating Instructions
+  revision: B
+  language: en-AU
+  style: clausal
+  equipment:
+    model: IG-2000
+    nominal_max_unit: "2440 mm x 4800 mm"
+    cavity_range: "6 - 16 mm"
+    installed: "2023-06"
+
+sections:
+  - number: "1"
+    title: General
+    paragraphs:
+      - "These operating instructions apply to the insulating glass production line IG-2000 in its standard configuration with the automatic spacer applicator, the gas filling station and the dual-component secondary sealing station."
+      - "The instructions are intended for trained operating personnel and for maintenance staff who have completed the manufacturer's product training. Personnel who have not completed this training must not operate the line, and must not carry out any work on the electrical or pneumatic systems."
+      - "The operating instructions must be kept available at the line at all times. The operator is responsible for ensuring that the instructions are complete and legible, and that any supplements issued by the manufacturer are filed with them."
+      - "Where the operating instructions refer to standards, regulations or statutory provisions, these are provided for reference only. Compliance with them remains the responsibility of the operating company, and the manufacturer accepts no liability for their interpretation in a particular project."
+
+  - number: "2"
+    title: Safety Instructions
+    paragraphs:
+      - "The line has been built according to the recognised rules of technology and the applicable safety regulations. Nevertheless, hazards can arise during operation if the line is used improperly or by untrained personnel."
+    warnings:
+      - level: DANGER
+        text: "Before any work on the electrical equipment, isolate the line at the main switch and secure it against reconnection. Residual energy remains stored in the drive converters for a period after isolation."
+      - level: WARNING
+        text: "The gas filling station operates with a pressurised inert gas supply. Never disconnect a gas line while the station is pressurised, and never enter the filling enclosure while the station is in automatic mode."
+      - level: CAUTION
+        text: "Individual glass panes may have sharp edges, even when they have been seamed. Wear cut-resistant gloves whenever a pane is handled manually."
+    subsections:
+      - number: "2.1"
+        title: Electrical Hazards
+        paragraphs:
+          - "The line is supplied at 400 V three-phase and contains drive converters that retain a charge after the main switch has been opened. Work on the electrical system may only be carried out by a qualified electrician, and only after the specified discharge time has elapsed."
+          - "The safety circuits of the line are monitored. Bridging a safety circuit, even temporarily for a test run, is prohibited, because the monitoring is not able to distinguish between an intentional bridge and a fault."
+      - number: "2.2"
+        title: Mechanical Hazards
+        paragraphs:
+          - "Crushing points exist at the press unit, at the sealing station and at every transfer between conveyor sections. The protective guards must be fitted and the safety light curtains must be operational before the line is started."
+          - "The glass transport system does not stop immediately when the drive is switched off, because the panes continue to move under their own momentum. Allow the transport sections to come to a complete standstill before reaching into the line."
+
+  - number: "3"
+    title: Functional Description
+    paragraphs:
+      - "The line produces sealed insulating glass units from two or more glass panes, a spacer system filled with desiccant, and a dual-component secondary seal applied around the full perimeter of the unit."
+      - "The production sequence is divided into the washing and drying of the panes, the application of the spacer, the assembly of the unit, the optional filling of the cavity with inert gas, and the application and curing of the secondary seal."
+    subsections:
+      - number: "3.1"
+        title: Unit Construction
+        paragraphs:
+          - "A unit consists of an outer pane, an inner pane, and a spacer system that establishes and maintains the cavity. The cavity dimension is determined by the spacer profile, and the permitted range for this line is stated in the equipment data."
+          - "The unit may be supplied with a single cavity or with two cavities. In the case of a two-cavity unit, the centre pane carries a spacer system on both faces, and the overall unit thickness increases accordingly."
+      - number: "3.2"
+        title: Spacer System
+        paragraphs:
+          - "The spacer system has two functions: it defines the cavity width, and it contains the desiccant that absorbs residual moisture from the cavity over the life of the unit."
+        subsections:
+          - number: "3.2.1"
+            title: Warm Edge Spacer
+            paragraphs:
+              - "A warm edge spacer has a lower thermal conductivity than the conventional aluminium profile, and therefore reduces heat loss at the perimeter of the unit, which is the location at which condensation most readily forms in a cold climate."
+              - "The warm edge profile is more sensitive to handling than the aluminium profile. It must not be compressed at the corners, since a compressed corner reduces the cavity width locally and weakens the bond of the secondary seal at that point."
+          - number: "3.2.2"
+            title: Desiccant Fill
+            paragraphs:
+              - "The desiccant must be filled to the level specified by the spacer manufacturer. An under-filled spacer leaves the unit without sufficient capacity to absorb the moisture that enters during assembly, and a visible fogging of the cavity will develop within the warranty period."
+              - "The desiccant is supplied in sealed containers and must be transferred to the filling hopper immediately before use. Desiccant that has been exposed to the workshop atmosphere must not be used."
+      - number: "3.3"
+        title: Secondary Sealing
+        paragraphs:
+          - "The secondary seal is applied as a dual-component polysulphide or silicone material around the full perimeter of the unit, and it bonds to both glass panes. The seal provides the mechanical integrity of the unit and prevents the ingress of moisture."
+          - "The mixing ratio of the two components is controlled automatically by the metering unit. A manual override is provided for purging only, and must not be used for production."
+
+  - number: "4"
+    title: Operating Instructions
+    paragraphs:
+      - "The following sequence corresponds to the order in which the operator encounters the line. Deviations from the sequence require the approval of the shift supervisor."
+    subsections:
+      - number: "4.1"
+        title: Start-up
+        subsections:
+          - number: "4.1.1"
+            title: Preparation
+            paragraphs:
+              - "Confirm that the line is clean, that the washing section has been filled and that the water has reached the operating temperature, and that the desiccant hopper contains sufficient material for the planned batch."
+              - "Confirm that the correct spacer profile has been loaded for the units to be produced. The spacer profile determines the cavity width, and an incorrect profile cannot be corrected after the unit has been sealed."
+          - number: "4.1.2"
+            title: Start-up Sequence
+            paragraphs:
+              - "Switch on the main switch, release the emergency stop circuit, and acknowledge any outstanding fault messages on the control panel. Do not attempt to clear a fault message by cycling the power, since the message may indicate a condition that will recur."
+              - "Start the transport sections in the order indicated on the control panel. Starting the sections in a different order may result in panes being released onto a section that is not yet running."
+      - number: "4.2"
+        title: Production Run
+        subsections:
+          - number: "4.2.1"
+            title: Glass Loading
+            paragraphs:
+              - "Load the panes with the low-e coating on the correct face. The correct face depends on the position of the pane within the unit, and the coating carries a permanent mark that identifies it."
+              - "Do not load a pane whose coating face cannot be identified without first confirming the position with the supervisor, since a unit assembled with the coating on the wrong face cannot be corrected and must be rejected."
+          - number: "4.2.2"
+            title: Gas Filling
+            paragraphs:
+              - "Gas filling is optional and is selected per order. When selected, the cavity is filled with argon before the second pane is applied and before the secondary seal is applied."
+            subsections:
+              - number: "4.2.2.1"
+                title: Argon Fill Procedure
+                paragraphs:
+                  - "Place the assembled pane pair on the filling station, align the filling nozzle with the spacer opening, and start the automatic fill cycle from the control panel."
+                  - "The fill cycle is controlled by time, and the time is set according to the cavity width and the unit area. Confirm that the cycle time corresponds to the current order before starting, since a fill time carried over from a previous order will produce an incorrectly filled unit."
+                  - "After the fill cycle has completed, the filling opening is closed by the automatic sealing head. Verify visually that the opening has been closed before the unit is transferred to the secondary sealing station."
+          - number: "4.2.3"
+            title: Sealing
+            paragraphs:
+              - "The secondary seal is applied automatically around the full perimeter of the unit. The operator must confirm that the seal is continuous at all four corners, since an interruption at a corner is the most common cause of a subsequent seal failure."
+              - "Units are transferred to the curing racks immediately after sealing. The seal must not be loaded or handled until the curing time specified by the sealant manufacturer has elapsed."
+      - number: "4.3"
+        title: Shutdown
+        paragraphs:
+          - "Remove all panes from the line, close the desiccant hopper, and flush the metering unit of the secondary sealing station according to the sealant manufacturer's instructions."
+          - "Do not leave the metering unit filled overnight, since the mixed material cures in place and the mixing element must then be replaced."
+
+  - number: "5"
+    title: Quality Control
+    paragraphs:
+      - "The operator is responsible for the visual inspection of every unit. The seal test is carried out on a sample basis as specified below."
+    subsections:
+      - number: "5.1"
+        title: Visual Inspection
+        paragraphs:
+          - "Inspect the unit in transmitted light and in reflected light. Reject the unit if the cavity contains visible moisture, dust, or a spacer that is not parallel to the glass edge."
+          - "Record any rejection on the production sheet, together with the reason. Rejections that repeat with the same reason on the same shift require a supervisor review, since they usually indicate a machine condition rather than operator error."
+      - number: "5.2"
+        title: Seal Test
+        paragraphs:
+          - "The seal test is carried out on one unit per shift from the production run. The unit is retained and stored under the conditions specified by the test procedure for the duration of the test."
+          - "A unit that fails the seal test indicates that the sealing parameters are outside specification, and the production run from which the sample was taken must be held pending review."
+
+  - number: "6"
+    title: Troubleshooting
+    paragraphs:
+      - "The following table lists the conditions that the operator may correct without maintenance support. Any other condition requires a maintenance request."
+    tables:
+      - caption: "Table 6-1 Operator-level troubleshooting"
+        columns: ["Condition", "Probable cause", "Action"]
+        rows:
+          - ["Fogging visible in cavity", "Insufficient desiccant", "Stop, check hopper and fill level"]
+          - ["Seal discontinuous at corner", "Nozzle alignment", "Re-align nozzle, reject unit"]
+          - ["Spacer not parallel to edge", "Applicator guide offset", "Reset guide, check first unit"]
+          - ["Gas fill time unchanged", "Order parameters not applied", "Reload order on control panel"]
+          - ["Panels stuck between sections", "Transfer section stopped", "Stop line, clear pane, restart in order"]

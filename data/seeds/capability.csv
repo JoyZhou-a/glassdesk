@@ -1,0 +1,31 @@
+process,shape,thickness_mm,max_width_mm,max_height_mm,max_area_m2,min_width_mm,min_height_mm,tolerance_mm,min_radius_mm,igu_cavity_mm,notes
+toughened,flat,4,2440,3660,8.9,300,300,1.0,0,,furnace TF-2448
+toughened,flat,5,2440,4200,10.2,300,300,1.0,0,,furnace TF-2448
+toughened,flat,6,2440,4800,11.7,300,300,1.0,0,,furnace TF-2448
+toughened,flat,8,2440,4800,11.7,300,300,1.5,0,,furnace TF-2448
+toughened,flat,10,2440,4800,11.7,300,300,1.5,0,,furnace TF-2448
+toughened,flat,12,2440,4800,11.7,300,300,1.5,0,,furnace TF-2448
+toughened,flat,15,2400,4500,10.8,300,300,2.0,0,,reduced area above 12mm
+toughened,flat,19,2400,4200,10.1,300,300,2.0,0,,reduced area above 12mm
+toughened,bent,4,2000,3000,6.0,400,400,1.0,1200,,bent glazing
+toughened,bent,5,2000,3000,6.0,400,400,1.0,1200,,bent glazing
+toughened,bent,6,2000,3600,7.2,400,400,1.0,1000,,bent glazing
+toughened,bent,8,2000,3600,7.2,400,400,1.5,1000,,bent glazing
+toughened,bent,10,2000,3000,6.0,400,400,1.5,1500,,bent glazing
+toughened,bent,12,1800,3000,5.4,400,400,1.5,1800,,bent glazing
+annealed,flat,4,3660,2440,8.9,300,300,1.0,0,,jumbo sheet
+annealed,flat,5,3660,2440,8.9,300,300,1.0,0,,jumbo sheet
+annealed,flat,6,3660,2440,8.9,300,300,1.0,0,,jumbo sheet
+annealed,flat,8,3210,2250,7.2,300,300,1.5,0,,stock sheet
+annealed,flat,10,3210,2250,7.2,300,300,1.5,0,,stock sheet
+annealed,flat,12,3210,2250,7.2,300,300,1.5,0,,stock sheet
+laminated,flat,6.38,2440,4800,11.7,300,300,1.5,0,,3+0.38 PVB+3
+laminated,flat,8.76,2440,4800,11.7,300,300,1.5,0,,4+0.76 PVB+4
+laminated,flat,10.76,2440,4500,11.0,300,300,1.5,0,,5+0.76 PVB+5
+laminated,flat,12.76,2400,4200,10.1,300,300,2.0,0,,6+0.76 PVB+6
+igu,flat,4,2440,4800,11.7,300,300,1.5,0,6/9/12/16,clear or low-e
+igu,flat,5,2440,4800,11.7,300,300,1.5,0,6/9/12/16,clear or low-e
+igu,flat,6,2440,4800,11.7,300,300,1.5,0,6/9/12/16,clear or low-e
+igu,flat,8,2440,4500,11.0,300,300,2.0,0,9/12/16,clear or low-e
+igu,flat,10,2440,4200,10.1,300,300,2.0,0,12/16,clear or low-e
+igu,flat,12,2400,4000,9.6,300,300,2.0,0,12/16,clear or low-e

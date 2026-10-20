@@ -56,7 +56,26 @@ uv run python scripts/check_env.py
 
 # 4. 测试
 uv run pytest -v
+
+# 5. 构建语料（M1）：校验 → 渲染 XLSX / DOCX / PDF / MD
+uv run python scripts/build_corpus.py --check   # 只做数字自洽校验
+uv run python scripts/build_corpus.py           # 校验 + 全量渲染
 ```
+
+### 语料构建的额外依赖
+
+`build_corpus.py` 的 PDF 由 DOCX 经 **LibreOffice Kit** 转换而来（不是 reportlab），
+需要两个环境变量指向 bundled 运行时：
+
+```powershell
+$env:LO_NODE = "<...>\runtime\primary-runtime\dependencies\node\bin\node.exe"
+$env:LO_CLI  = "<...>\app.asar.unpacked\dsh\node_modules\@deepseek-ai\libreoffice-kit\lib\cli.js"
+```
+
+扫描版 PDF 由 pymupdf 把文本 PDF 栅格化后重新打包（JPEG 压缩），
+脚本会**自动断言它不含文本层**——否则 OCR 路径就没被真正验证。
+
+> 注意：LibreOffice 拒绝覆盖已存在文件，脚本已处理（转换前先删），可反复执行。
 
 ### 依赖服务
 
