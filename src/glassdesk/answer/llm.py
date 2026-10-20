@@ -83,6 +83,10 @@ class CachedLLM:
             )
         return self._client
 
+    def set_cache_enabled(self, enabled: bool) -> None:
+        """按请求开关缓存（接口层可以逐次指定）。"""
+        self._use_cache = enabled
+
     def cache_key(self, system: str, prompt: str) -> str:
         payload = json.dumps(
             {
