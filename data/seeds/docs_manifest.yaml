@@ -1,5 +1,6 @@
 # doc_id 的唯一登记处。
 # 入库时按 file 查表得到 doc_id；查不到即报错，不允许自动猜测（见 09_知识库更新.md §11）。
+# strategy 决定切分方式：manual | section | entry | record | table
 # 文件名一律不带版本号——版本由 documents.version 表达。
 version: 1
 
@@ -8,6 +9,7 @@ documents:
     title: Glass Capability Matrix 2026
     authority: manual
     kind: table
+    strategy: table
     file: data/raw/tables/capability.xlsx
     effective_from: 2026-01-01
 
@@ -15,6 +17,7 @@ documents:
     title: Price List 2026 (AUD, incl. GST)
     authority: manual
     kind: table
+    strategy: table
     file: data/raw/tables/pricing.xlsx
     effective_from: 2026-01-01
     effective_to: 2026-12-31
@@ -23,6 +26,7 @@ documents:
     title: Standard Lead Times
     authority: manual
     kind: table
+    strategy: table
     file: data/raw/tables/leadtime.xlsx
     effective_from: 2026-01-01
 
@@ -30,6 +34,7 @@ documents:
     title: Tempering Furnace TF-2448 Operation Manual (Rev C)
     authority: manual
     kind: document
+    strategy: manual
     file: data/raw/manuals/tempering.docx
     effective_from: 2026-03-01
 
@@ -37,6 +42,7 @@ documents:
     title: Insulating Glass Line IG-2000 Operating Instructions
     authority: manual
     kind: document
+    strategy: manual
     file: data/raw/manuals/iglazing.pdf
     effective_from: 2025-09-01
 
@@ -44,6 +50,7 @@ documents:
     title: Tempering Furnace TF-2448 - Maintenance Section (scanned)
     authority: manual
     kind: document
+    strategy: manual
     file: data/raw/manuals/tempering_scan.pdf
     effective_from: 2026-03-01
 
@@ -51,6 +58,7 @@ documents:
     title: Australian Glass Standards - Summary Sheets
     authority: standard
     kind: document
+    strategy: section
     file: data/raw/standards/
     effective_from: 2026-01-01
 
@@ -58,6 +66,7 @@ documents:
     title: Customer Service Fieldbook (internal)
     authority: experience
     kind: document
+    strategy: entry
     file: data/raw/experience/fieldbook.md
     effective_from: 2026-01-01
 
@@ -65,5 +74,6 @@ documents:
     title: Service Tickets 2025 (anonymised)
     authority: experience
     kind: dataset
+    strategy: record
     file: data/raw/tickets/tickets.jsonl
     effective_from: 2026-01-01

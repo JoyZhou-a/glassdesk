@@ -200,8 +200,7 @@ def load_xlsx(path: Path) -> LoadResult:
         ]
         if not pairs:
             continue
-        blocks.append(Block(text=" | ".join(pairs), kind=BlockKind.TABLE_ROW,
-                            clause=ws.title))
+        blocks.append(Block(text=" | ".join(pairs), kind=BlockKind.TABLE_ROW))
 
     return LoadResult(blocks=blocks)
 
